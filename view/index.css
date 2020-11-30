@@ -1,0 +1,28 @@
+.main-container {
+    padding: 100px 10% 15%;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.main-container form {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+#username, #password {
+    padding: 4.5%;
+    border: solid 0.5px gray;
+    margin-bottom: 7px;
+}
+
+#errormessage {
+    color: red;
+}
+
+#loginbutton, #signupbutton {
+    margin-top: 8px;
+    padding: 10px;
+    background-color: white;
+}

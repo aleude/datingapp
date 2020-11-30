@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dating-app index</title> <!-- Ændre navn her-->
+    <link rel="stylesheet" href="styles.css"/>
+    <link rel="stylesheet" href="settings.css"/>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="header">
+            <div class="headerleft">
+                <button type="button" class="home-btn">Home</button>
+            </div>
+            <div class="headermiddle">
+                <img class="logo" src="images/datingapp-logo.png">
+            </div>
+            <div class="headerright">
+                <button type="button" class="logout-btn">Log out</button> 
+            </div>
+        </div> 
+        <div class="main">
+            <div class="main-container">
+                <div>
+                <form>
+                    <h1>Update your profile</h1>
+                    <br>
+                    <button type="button" id="interests-btn">Click here to update your interests</button>
+                    <h3>First name</h2>
+                        <input type="text" id="firstname"></input>
+                    <h3>Last name</h2>
+                        <input type="text" id="lastname"></input>
+                    <h3>Age</h2>
+                        <input type="date" id="age"></input>
+                    <h3>Gender</h3>
+                    <div>
+                        <input type="radio" name="gender" value="Male">Male</input>
+                        <input type="radio" name="gender" value="Female">Female</input>
+                    </div>
+                    <h3>Password</h2>
+                    <input type="password" id="password"></input>
+                    <p id="passwordvalidate">_</p>
+                    <button type="submit" id="save">Sign up</button>
+                    <p id="errormessage">Error</p>
+                    <button type="button" id="deleteuser">Delete your profile</button>
+                </form>
+               </div>
+            </div>
+        </div>
+    </div>
+    <script src="settings.js"></script>
+</body>
+</html>

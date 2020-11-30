@@ -1,0 +1,97 @@
+.profile-top {
+    width: 100%;
+    display: flex;
+    margin-bottom: 25px;
+}
+
+.profile-top-left {
+    width: 50%;
+    padding-left: 5%;
+}
+
+#profile-top-left-div-top {
+    height: 50%;
+}
+
+#profile-top-left-div-bottom {
+    height: auto;
+}
+
+
+.profile-top-right {
+    width: 50%;
+    padding-right: 5%;
+}
+
+.profile-top-right img {
+    height: 250px;
+    width: auto;
+    float: right;
+    background-color: white;
+}
+
+.profile-bottom {
+    width: 100%;
+    height: 180px;
+    display: flex;
+    justify-content: center;
+    overflow: scroll;
+}
+
+.profile-bottom div {
+    padding-left: 5%;
+    padding-right: 5%;
+}
+
+.bottom {
+    position: absolute;
+    height: 150px;
+    width: 100%;
+    bottom: 10px;
+    margin: -10px;
+
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Images */
+.img {
+    height: 100px;
+    width: 100px;
+}
+
+.img:hover {
+    opacity: 0.45;
+}
+
+.img:active {
+    opacity: 0.3;
+}
+
+.img-wrap {
+    padding: 12px;
+    border-radius: 20%;
+}
+
+.img-wrap:hover {
+    background-color: black;
+    opacity: 0.45;
+}
+
+.img-wrap:active {
+    opacity: 0.3;
+}
+
+/*Image buttons (button background) */
+
+#dislike, #undecided, #like {
+    height: 125px;
+    width: 125px;
+    border-radius: 20%;
+    background-color: khaki;
+    margin: 10px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

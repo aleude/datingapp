@@ -1,0 +1,84 @@
+body {
+    margin: 0%, auto;
+    background-color: antiquewhite;
+}
+
+.wrapper {
+    height: 750px;
+    background-color: aqua;
+    margin: 50px 15% 50px 15%;
+    border-radius: 0%;
+    box-shadow: 1px 1px 3px 3px lightgray;
+    border: solid 1px gray;
+
+}
+
+.header {
+    height: 12.5%;
+    width: 100%;
+    background-color: lightblue;
+    box-shadow: 0px 5px #c5c5c5;
+    display: flex;
+    justify-content: space-between;
+}
+
+.main {
+    background-color: lightcyan;
+    height: 87.5%;
+    width: 100%;
+}
+
+.main, .header {
+    display: flex;
+    position: relative;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+/* content in header */
+
+.headerleft {
+    height: 100%;
+    width: 25%;
+    display: flex;
+    justify-content: left;
+}
+
+.headermiddle {
+    height: 100%;
+    width: 50%;
+    display: flex;
+    align-items: center; /* Vertical align */
+    justify-content: center; /*Horizontal align*/
+}
+
+.headerright {
+    height: 100%;
+    width: 25%;
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+
+}
+
+.headerright div {
+    float: right;
+}
+
+.logo {
+    height: 75%;
+    width: auto;
+}
+
+.my-matches-btn, .settings-btn, .logout-btn {
+    padding: 23px 5px ;
+    margin: 5px;
+}
+
+#b { /* Test til, hvordan man aligner noget i bunden HUSK AT SLETTE DETTE*/
+    position: absolute;
+    height: 50px;
+    background-color: green;
+    width: 50px;
+    bottom: 10px;
+}

@@ -1,0 +1,32 @@
+.main-container {
+    padding: 0px 10% 15%;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.main-container form {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+#save, #deleteuser, #interests-btn{
+    margin-top: 5px;
+    padding: 10px;
+    background-color: white;
+}
+#deleteuser {
+    background-color: darkred;
+    color: wheat;
+}
+
+#firstname, #lastname, #age, #password {
+    padding: 2%;
+    margin-top: -18px;
+    border: solid 0.5px gray;
+}
+
+#passwordvalidate {
+    margin-top: 0;
+}
