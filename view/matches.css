@@ -6,9 +6,9 @@
     justify-content: space-evenly;
 }
 
-.table-div table {
+#match-table {
     width: 100%;
-    text-align: center;
+    text-align: left;
     overflow: scroll;
 }
 
@@ -23,7 +23,7 @@
     justify-content: center;
 }
 
-#delete-match-div form, h2, p{
+form, h2, p{
     text-align: center;
 }
 
