@@ -5,16 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dating-app index</title> <!-- Ændre navn her-->
     <link rel="stylesheet" href="styles.css"/>
+    <link rel="stylesheet" href="matches.css"/>
 </head>
 <body>
     <div class="wrapper">
         <div class="header">
+            <div class="headerleft">
+                <button type="button" class="home-btn">Home</button>
+            </div>
+            <div class="headermiddle">
+                <img class="logo" src="images/datingapp-logo.png">
+            </div>
+            <div class="headerright">
+                <button type="button" class="logout-btn">Log out</button> 
+            </div>
         </div> 
         <div class="main">
-            test
+            <div class="container">
+                <h2>List of yout matches:</h2>
+                <br>
+                <div class="table-div">
+                    <table>
+                        <tr>
+                            <th>Matchname ID</th>
+                            <th>Fullname</th>
+                            <th>Age</th>
+                        </tr>
+                    </table>
+                </div>
+                <div id="delete-match-div">
+                    <h2>Delete match:</h2><br>
+                    <p>Delete a match by typing the Matchname ID in the input and click enter</p>
+                    <form>
+                        <input type="text" id="delete-match-input"></input><br>
+                        <button type="button" id="delete-match-button">Delete match</button>
+                        <p id="delete-match-message">Your match is...</p>
+                    </form>
+                </div>
+            </div>
         </div>
-    </div>    
-
-    <script src="index.js"></script>
+    <script src="matches.js"></script>
 </body>
 </html>
