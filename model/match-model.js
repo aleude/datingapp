@@ -1,12 +1,11 @@
 //NOTE TIL MiG SELV: UDELUKKENDE MATCH RELATERET MED FUNKTIONER OG KLASSER
 
 class User_Matchmaking {
-    constructor(username, likes, dislikes, likedBy, dislikedBy) {
+    constructor(username, matches, likes, dislikes, likedBy, dislikedBy) {
         this.username = username;
+        this.matches = matches;
         this.likes = likes;
         this.dislikes = dislikes;
-
-        //When user deletes itself, I needs to delete it likes and dislikes from others:
         this.likedBy = likedBy; 
         this.dislikedBy = dislikedBy;
     };
@@ -54,14 +53,82 @@ class User_Matchmaking {
         };
     };
 
+    //Matchmaking function
+    checkAndAddMatch(usernameOfMatch, file) {
+
+        let x = this.findThisUserByIndex(file);
+        //index of other user
+        let j = this.findOtherUserByIndex(usernameOfMatch, file);
+
+        //If match is true
+        let matchTrue = false;
+
+        //New find match
+        for (let i=0; i<file[x].likedBy.length; i++) {
+
+            if (usernameOfMatch === file[x].likedBy[i]) {
+                matchTrue = true;
+                break;
+            }
+
+        }
+        
+        if (matchTrue) {
+            //Pushes match username to this user match array
+            file[x].matches.push(usernameOfMatch);
+            file[j].matches.push(this.username);
+
+            console.log(`Success: ${this.username} has now matched with ${usernameOfMatch}`);
+
+        } else {
+            console.log(`Error: Something went wrong, ${this.username} couldn't match with ${usernameOfMatch}`);
+        };  
+    };
+
+    //Delete a single match
+    deleteMatch(usernameOfMatch, file) {
+        //Index of this user
+        let a = this.findThisUserByIndex(file);
+        //index of other user
+        let b = this.findOtherUserByIndex(usernameOfMatch, file);
+
+        let removeMatch = false;
+
+        //Delete match in other user array
+        for (let i=0; i<file[b].matches.length; i++) {
+            if (this.username === file[b].matches[i]) {
+                file[b].matches.splice(i, 1);
+                removeMatch = true;
+                break;
+            };
+        };
+
+        //Delete match in this user array
+        for (let i=0; i<file[a].matches.length; i++) {
+            if(usernameOfMatch === file[a].matches[i]) {
+                file[a].matches.splice(i, 1);
+                removeMatch = true;
+                break;
+            };
+        };
+
+        //< message
+        if (removeMatch) {
+            console.log(`Succes: ${this.username} has succesfull removed ${usernameOfMatch} from match`)
+        } else {
+            console.log(`Error: ${this.username} couldn't remove ${dislikename} from match`)
+        };
+    
+    };
+
     dislike(dislikename, file) {
 
         //Index of this user
         let i = this.findThisUserByIndex(file);
-        //index of counter user
+        //index of other user
         let j = this.findOtherUserByIndex(dislikename, file);
 
-        //If i === null error message the rest shouldn't be executed
+        //If i is undefined or not
         if ((i === undefined) || (j === undefined)) {
             return;
         } else {
@@ -74,7 +141,24 @@ class User_Matchmaking {
     };
 
     like(likename, file) {
-        //Do the same. Change wrong message.
+        
+        //Index of this user
+        let i = this.findThisUserByIndex(file);
+        console.log(i);
+        //Index of other user
+        let j = this.findOtherUserByIndex(likename, file)
+
+        console.log(j)
+
+        //If i is undefined or not
+        if ((i === undefined) || (j === undefined)) {
+            return;
+        } else {
+            file[i].likes.push(likename);
+            file[j].likedBy.push(this.username);
+
+            console.log(`Succes: ${this.username} has succesfull liked ${likename}`)
+        };
 
     };
  
@@ -173,6 +257,11 @@ class User_Matchmaking {
                     };
                 };
             };
+        };
+
+        //Delete this user matches
+        for (let i=0; i<this.matches.length; i++) {
+            this.deleteMatch(this.matches[i], file);
         };
 
         //Delete this user from file
