@@ -45,9 +45,7 @@ let counterUser = 'pablo'
 
 
 //newUser.like(counterUser, matchFile)
-//newUser.checkAndAddMatch(counterUser, matchFile)
 
-//newUser.checkAndAddMatch('pablo', matchFile);
 
 newUser.deleteUser(matchFile);
 

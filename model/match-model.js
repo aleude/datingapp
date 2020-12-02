@@ -10,7 +10,7 @@ class User_Matchmaking {
         this.dislikedBy = dislikedBy;
     };
 
-    //Help-function to find object-user in file
+    //Sub-function to find this user in file
     findThisUserByIndex(file) {
     
         let index = undefined;
@@ -32,7 +32,7 @@ class User_Matchmaking {
         };
     };
 
-    //Help-function to find counter-user in file
+    //Sub-function to find counter-user in file
     findOtherUserByIndex(otherUser, file) {
         let index = undefined;
         let error = true;
@@ -53,8 +53,61 @@ class User_Matchmaking {
         };
     };
 
+    //Sub-function to find random index in file
+    RandomUser(file) {
+        return Math.floor(Math.random() * file.length);
+    };
+
+    //Sub-function for recursion
+    findMatchHelper(file, thisUserIndex, arr) {
+
+        //Finds user at random index
+        let i = this.RandomUser(file);
+        let maybeThisUser = file[i].username;
+        
+        //Checks if it is not the same user
+        if (this.username != maybeThisUser) {
+
+            for (let i=0; i<file[thisUserIndex].dislikes.length; i++) {
+                
+                //Checks if the user is has not been disliked
+                if (maybeThisUser === file[thisUserIndex].dislikes[i]) {
+                    //During recursive if true;
+                    this.findMatchHelper(file, thisUserIndex, arr);
+                };
+            };
+
+            //Base
+            return arr.push(maybeThisUser);
+
+        } else {
+            //Find new user, if this user is the same as random user
+            this.findMatchHelper(file, thisUserIndex, arr);
+        }; 
+
+    };
+
+    //Potential match user algorithm
+    findMatch(file) {
+        let thisUserIndex = this.findThisUserByIndex(file);
+        let arr = [];
+
+        //Checks if the user has not disliked all other users in system
+        if (file[thisUserIndex].dislikes.length < file.length-1) {
+            this.findMatchHelper(file, thisUserIndex, arr);
+        } else {
+            //If there is no more users to show
+            return null;
+        };
+
+        //Returns first user matching the criteria
+        return arr[0];
+    };
+
+
     //Matchmaking function
-    checkAndAddMatch(usernameOfMatch, file) {
+    //NOTE TIL MIG SELV: Husk at først køres en user.like, og bagefter user.checkForMatch
+    checkForMatch(usernameOfMatch, file) {
 
         let x = this.findThisUserByIndex(file);
         //index of other user

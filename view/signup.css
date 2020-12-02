@@ -1,3 +1,5 @@
+/*Header*/
+
 .main-container {
     padding: 0px 10% 15%;
     display: flex;
@@ -26,3 +28,4 @@
 #passwordvalidate {
     margin-top: 0;
 }
+
