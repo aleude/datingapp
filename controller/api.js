@@ -1,14 +1,15 @@
-//- Require node-moduls:
+//- Require node-modules:
 const express = require('express');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-//- Require classes:
+//- Require classes from model:
 
 //- Setting up server:
 const app = express();
-const PORT = process.env.PORT || 3800;;
+const PORT = process.env.PORT || 3800;
+const JWTkey;
 
 //- Use moduls for server:
 app.use(bodyParser.json());
