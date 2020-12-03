@@ -24,6 +24,55 @@ function checkRadioBtn(radiobutton) {
 
 };
 
+//This function validates user-inputs when submitted.
+function validateUserInput() {
+
+    //Defines message and sets errors to false.
+    let message = '';
+    let inputError = false;
+
+    //Validates all inputs
+    if (username.value.length < 1) {
+        message += 'Username is missing. ';
+        inputError = true;
+    };
+
+    if (firstName.value.length < 1) {
+        message += 'First name is missing. ';
+        inputError = true;
+    };
+
+    if (lastName.value.length < 1) {
+        message += 'Last name is missing. ';
+        inputError = true;
+    };
+
+    if (birthday.value.length < 1) {
+        message += 'Your birthday are not picked. ';
+        inputError = true;
+    };
+
+    if (checkRadioBtn(gender) === undefined) {
+        message += 'You need to choose a gender. ';
+        inputError = true;
+    };
+
+    if (password.value.length < 8) {
+        message += 'Password is too short. ';
+        inputError = true;
+    };
+
+    //Conditional statement to handle success or error
+    if (inputError) {
+        errorMessage.innerHTML = message;
+        return inputError;
+    } else {
+        errorMessage.innerHTML = '';
+        return inputError;
+    };
+};
+
+
 //- Eventlisteners and API-calls
 
 //Check if user is already logged in
@@ -52,12 +101,47 @@ backBtn.addEventListener('click', ()=> {
 })
 
 
-
-
 //Just to test.
 signUp.addEventListener('click', ()=> {
 
-    console.log(checkRadioBtn(gender));
+    let inputError = validateUserInput();
+
+    if(!inputError) {
+        const xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+
+        let newUserForm = {
+            username: username.value,
+            password: password.value,
+            firstname: firstName.value,
+            lastname: lastName.value,
+            birthday: birthday.value,
+            gender: gender.value
+        };
+
+        xhr.addEventListener('readystatechange', function() {
+            if (this.readyState === 4) {
+                let ress = this.response;
+                if (ress == null) {
+                    errorMessage.innerHTML = 'Username already exists!';
+                } else {
+                    errorMessage.innerHTML = 'User has been created!'
+                    if (localStorage.getItem('JWT')) {
+                        localStorage.removeItem('JWT');
+                        localStorage.setItem('JWT', ress);
+                    } else {
+                        localStorage.setItem('JWT', ress);
+                    };
+                    //Replaces the webpage when success
+                    location.replace('./main.html');
+                };
+            };
+        });
+
+        xhr.open('POST', 'http://localhost:3800/signup', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(JSON.stringify(newUserForm));
+    };
 });
 
 
@@ -67,7 +151,7 @@ signUp.addEventListener('click', ()=> {
 1) Tag alt data fra HTML og lav det til JSON
 2) Send alt data til serveren
 3) Serveren validere, om useren eksisterer eller ej
-4) Eksisterer useren ikke skrives denne user i alle 3 json-filer
+4) Eksisterer useren ikke skrives denne user i alle 4 json-filer
 5) Når useren er skrevet signes og sendes
 en JWT-token retur med username som payload til klienten.
 6) I klienten (efter if-statement) gemmes denne JWT token i localStroage

@@ -201,8 +201,6 @@ class Matchmaking {
         //Index of other user
         let j = this.findOtherUserByIndex(likename, file)
 
-        console.log(j)
-
         //If i is undefined or not
         if ((i === undefined) || (j === undefined)) {
             return;

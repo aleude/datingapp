@@ -72,8 +72,8 @@ class User {
 
 
 class FreeUser extends User {
-    constructor(username, password, firstName, lastName, age, gender) {
-        super(username, password, firstName, lastName, age, gender);
+    constructor(username, password, firstName, lastName, birthday, gender) {
+        super(username, password, firstName, lastName, birthday, gender);
     };
 };
 
