@@ -1,5 +1,5 @@
 const fs = require('fs');
-const User_Interest = require('../model/interest-model');
+const Interest = require('../model/interest-model');
 
 //Create empty array in json
 //fs.writeFileSync('../stroage/interest.json', JSON.stringify([]));
@@ -16,7 +16,7 @@ let newUser = new User_Interest('alex1999', text);
 file.push(newUser);
 */
 let i = 0;
-let oldUser = new User_Interest(file[i].username, file[i].interestText);
+let oldUser = new Interest(file[i].username, file[i].interestText);
 
 let updatedUser = new User_Interest(file[i].username, text);
 

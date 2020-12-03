@@ -1,8 +1,8 @@
 
-class User_Interest {
-    constructor(username, interestText) {
+class Interest {
+    constructor(username, userInterest) {
         this.username = username;
-        this.interestText = interestText;
+        this.userInterest = userInterest;
     };
 
     //Sub-function to find this user in file
@@ -44,4 +44,4 @@ class User_Interest {
 
 };
 
-module.exports = User_Interest;
+module.exports = Interest;
