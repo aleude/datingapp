@@ -9,11 +9,13 @@ const cors = require('cors');
 const FreeUser = require('../model/user-model');
 const Matchmaking = require('../model/matchmaking-model');
 const Interest = require('../model/interest-model');
+const { nextTick } = require('process');
 
 //- Setting up server:
 const app = express();
 const PORT = process.env.PORT || 3800;
 const privateKeyJWT = 'This is a private key';
+let userId = ''; //To identify the user if verification went well
 
 //- Use moduls for server:
 app.use(bodyParser.json());
@@ -45,15 +47,90 @@ function IndexOfUser(username, file) {
 };
 
 //Verify if token is okay.
-function Verification() {
+function Verification(req, res, next) {
+    if (typeof req.headers.authorization !== undefined) {
+        let token = req.headers.authorization;
 
+        //Verify token
+        jwt.verify(token, privateKeyJWT, {algorithm: 'HS256'}, (err, decoded) => {
+
+            //If error occured
+            if (err) {
+                res.send(null);
+            } else {
+                userId = decoded.userId;
+
+                //Checks if user is stored in file
+                let userFile = JSON.parse(fs.readFileSync('../storage/user.json'));
+                let userIndexInFile = IndexOfUser(userId, userFile);
+
+                if (userIndexInFile >= 0) {
+ 
+                    return next();  
+                } else {
+                    userId = '';
+                    return next();
+                };
+            };
+        });
+
+    } else {
+        //If token wasn't found
+        res.send(null);
+    };
 };
 
 //- API endpoints:
+
+//--- Login & New User related:
+
+//Sub-endpoint to validate if user was found in verificaton
+app.get('/checkuser', Verification, (req, res) => {
+
+    if (userId === '') {
+        res.send(null);
+    } else {
+        //Just sending something else than null
+        res.send(JSON.stringify({status: 'OK'}));
+    };
+});
+
+app.post('/login', (req, res) => {
+
+    let foundUser = false;
+    let userFile = JSON.parse(fs.readFileSync('../storage/user.json'));
+
+    //Checks if user exists in file;
+    let i = IndexOfUser(req.body.username, userFile);
+
+    //Validates if user was found in file or not
+    if (i >= 0) {
+        foundUser = true;
+    };
+
+    //Code if a user was found
+    if (foundUser) {
+
+        //Validates password of user
+        if (req.body.password === userFile[i].password) {
+
+            //Signs a JWT with username (ID of user) as payload
+            let token = jwt.sign({userId: req.body.username}, privateKeyJWT, {algorithm: 'HS256'});
+            res.send(JSON.stringify(token));
+
+        } else {
+            res.send(null);
+        };
+    } else {
+        res.send(null);
+    };
+
+});
+
 app.post('/signup', (req, res) => {
 
     let foundUser = false;
-    let userFile = JSON.parse(fs.readFileSync('../stroage/user.json'));
+    let userFile = JSON.parse(fs.readFileSync('../storage/user.json'));
     
     //Checks if user exists in file;
     let i = IndexOfUser(req.body.username, userFile);
@@ -71,8 +148,8 @@ app.post('/signup', (req, res) => {
         let newInterest = new Interest(req.body.username, '');
 
         //Gets the rest of the files
-        let matchmakingFile = JSON.parse(fs.readFileSync('../stroage/matchmaking.json'));
-        let interestFile = JSON.parse(fs.readFileSync('../stroage/interest.json'));
+        let matchmakingFile = JSON.parse(fs.readFileSync('../storage/matchmaking.json'));
+        let interestFile = JSON.parse(fs.readFileSync('../storage/interest.json'));
 
         //Pushes my new users into arrays from file
         userFile.push(newUser);
@@ -80,12 +157,13 @@ app.post('/signup', (req, res) => {
         interestFile.push(newInterest);
 
         //Updates/Overwrites my files
-        fs.writeFileSync('../stroage/user.json', JSON.stringify(userFile));
-        fs.writeFileSync('../stroage/matchmaking.json', JSON.stringify(matchmakingFile));
-        fs.writeFileSync('../stroage/interest.json', JSON.stringify(interestFile));
+        fs.writeFileSync('../storage/user.json', JSON.stringify(userFile));
+        fs.writeFileSync('../storage/matchmaking.json', JSON.stringify(matchmakingFile));
+        fs.writeFileSync('../storage/interest.json', JSON.stringify(interestFile));
 
         //Signs a JWT with username (ID of user) as payload
         let token = jwt.sign({userId: req.body.username}, privateKeyJWT, {algorithm: 'HS256'});
+
         res.send(JSON.stringify(token));
 
     } else {
@@ -94,6 +172,35 @@ app.post('/signup', (req, res) => {
     };
 
 });
+
+app.post('/interests/post', Verification, (req, res) => {
+
+    //If something went wrong and no user was found in verification
+
+    if(userId === '') {
+        res.send(null)
+
+    } else {
+
+        //Gets file with interests
+        let interestFile = JSON.parse(fs.readFileSync('../storage/interest.json'));
+
+        //Finds index of user in array from file
+        let i = IndexOfUser(userId, interestFile);
+
+        //Signs the user text with key
+        interestFile[i].interestText = req.body.interests;
+
+        //Updates the file
+        fs.writeFileSync('../storage/interest.json', JSON.stringify(interestFile));
+
+        //Just responding with something else than null
+        res.send(JSON.stringify({status: 'OK'}));
+    };
+
+});
+
+
 
 
 

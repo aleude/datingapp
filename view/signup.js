@@ -73,7 +73,7 @@ function validateUserInput() {
 };
 
 
-//- Eventlisteners and API-calls
+//- Eventlisteners and requests
 
 //Check if user is already logged in
 document.addEventListener('DOMContentLoaded', ()=> {
@@ -97,19 +97,22 @@ password.addEventListener('keyup', ()=> {
 
 //Back button redirect
 backBtn.addEventListener('click', ()=> {
-    location.replace('./index.html');
+    window.location.href = './index.html';
 })
 
 
-//Just to test.
+//Sign up a new user
 signUp.addEventListener('click', ()=> {
 
+    //Validates user inputs
     let inputError = validateUserInput();
 
+    //If validation went well
     if(!inputError) {
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
 
+        //Gets the value from input
         let newUserForm = {
             username: username.value,
             password: password.value,
@@ -119,21 +122,23 @@ signUp.addEventListener('click', ()=> {
             gender: gender.value
         };
 
+        //Request call to server
         xhr.addEventListener('readystatechange', function() {
             if (this.readyState === 4) {
-                let ress = this.response;
-                if (ress == null) {
+                let res = this.response;
+                if (res == null) {
                     errorMessage.innerHTML = 'Username already exists!';
                 } else {
                     errorMessage.innerHTML = 'User has been created!'
+                    //Signs the token to localstorage and redirect if everything went well
                     if (localStorage.getItem('JWT')) {
                         localStorage.removeItem('JWT');
-                        localStorage.setItem('JWT', ress);
+                        localStorage.setItem('JWT', res);
                     } else {
-                        localStorage.setItem('JWT', ress);
+                        localStorage.setItem('JWT', res);
                     };
                     //Replaces the webpage when success
-                    location.replace('./main.html');
+                    location.replace('./newuser.html');
                 };
             };
         });

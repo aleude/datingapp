@@ -1,8 +1,8 @@
 
 class Interest {
-    constructor(username, userInterest) {
+    constructor(username, interestText) {
         this.username = username;
-        this.userInterest = userInterest;
+        this.interestText = interestText;
     };
 
     //Sub-function to find this user in file
