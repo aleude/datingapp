@@ -65,39 +65,58 @@ class Matchmaking {
         let i = this.RandomUser(file);
         let maybeThisUser = file[i].username;
         
+        
         //Checks if it is not the same user
         if (this.username != maybeThisUser) {
 
+            let notLikedOrDisliked = true;
+
+            //This block checks for matchUser in dislikes array
             for (let i=0; i<file[thisUserIndex].dislikes.length; i++) {
-                
+                    
                 //Checks if the user is has not been disliked
                 if (maybeThisUser === file[thisUserIndex].dislikes[i]) {
-                    //During recursive if true;
-                    this.findMatchHelper(file, thisUserIndex, arr);
+                    //If user was found in array
+                    notLikedOrDisliked = false;
+                    break;
                 };
             };
 
-            //Base
-            return arr.push(maybeThisUser);
+            //This block checks for matchUser in likes array
+            for (let i=0; i<file[thisUserIndex].likes.length; i++) {
+                    
+                //Checks if the user has already been liked
+                if (maybeThisUser === file[thisUserIndex].likes[i]) {
+                    //If user was found in array
+                    notLikedOrDisliked = false;
+                    break;
+                };
+            };
+
+            if(notLikedOrDisliked) {
+                return arr.push(maybeThisUser);
+            } else {
+                //If users criteria didn't match, do recursion
+                this.findMatchHelper(file, thisUserIndex, arr);
+            };
 
         } else {
-            //Find new user, if this user is the same as random user
             this.findMatchHelper(file, thisUserIndex, arr);
-        }; 
-
+        };
     };
+    
 
     //Potential match user algorithm
     findMatch(file) {
         let thisUserIndex = this.findThisUserByIndex(file);
         let arr = [];
 
-        //Checks if the user has not disliked all other users in system
-        if (file[thisUserIndex].dislikes.length < file.length-1) {
+        //Checks if the user has not disliked or liked all other users in system
+        if ((file[thisUserIndex].dislikes.length < file.length-1) && (file[thisUserIndex].likes.length < file.length-1)) {
             this.findMatchHelper(file, thisUserIndex, arr);
         } else {
             //If there is no more users to show
-            return null;
+            arr.push(null);
         };
 
         //Returns first user matching the criteria
@@ -131,10 +150,14 @@ class Matchmaking {
             file[x].matches.push(usernameOfMatch);
             file[j].matches.push(this.username);
 
-            console.log(`Success: ${this.username} has now matched with ${usernameOfMatch}`);
+            //Returns 1 for true
+            return 1;
 
         } else {
-            console.log(`Error: Something went wrong, ${this.username} couldn't match with ${usernameOfMatch}`);
+            
+            //Returns 0 for false
+            return 0;
+
         };  
     };
 

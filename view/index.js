@@ -1,4 +1,4 @@
-//- Elements from body part:
+//- Elements from body:
 let username = document.getElementById('username');
 let password = document.getElementById('password');
 let loginBtn = document.getElementById('loginbutton');
@@ -41,13 +41,13 @@ document.addEventListener('DOMContentLoaded', ()=> {
         xhr.responseType = 'json';
         
         let token = localStorage.getItem('JWT');
-        console.log(token);
+        
         xhr.addEventListener('readystatechange', function(){
             if (this.readyState === 4) {
                 const res = this.response;
                 console.log(res);
                 //If user wasn't found, reset token
-                if (res === null) {
+                if (res.status === 'OK') {
                     localStorage.removeItem('JWT');
                 } else {
                     //If token i stored and user was found, go to main
@@ -85,8 +85,8 @@ loginBtn.addEventListener('click', ()=> {
         //Request call to server
         xhr.addEventListener('readystatechange', function(){
             if (this.readyState === 4) {
-                let res = this.response;
-                if (res === null) {
+                const res = this.response;
+                if (res.status === 'OK') {
                     alert('User or password is wrong');
                 } else {
                    //Signs the token to localstorage and redirect if everything went well

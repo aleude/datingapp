@@ -119,10 +119,10 @@ app.post('/login', (req, res) => {
             res.send(JSON.stringify(token));
 
         } else {
-            res.send(null);
+            res.send(JSON.stringify({status: 'OK'}));
         };
     } else {
-        res.send(null);
+        res.send(JSON.stringify({status: 'OK'}));
     };
 
 });
@@ -168,9 +168,127 @@ app.post('/signup', (req, res) => {
 
     } else {
         //If a user was found, returns null to client
-        res.send(null);
+        res.send(JSON.stringify({status: 'OK'}));
     };
 
+});
+
+//Matchmaking
+
+
+app.get('/match/getmatch', Verification, (req, res) => {
+
+    //Validates if user exists
+    if (userId === '') {
+        res.send(null);
+    } else {
+
+        //Get files for matchmaking, users and interest-information
+        let matchmakingFile = JSON.parse(fs.readFileSync('../storage/matchmaking.json'));
+        let userFile = JSON.parse(fs.readFileSync('../storage/user.json'));
+        let interestFile = JSON.parse(fs.readFileSync('../storage/interest.json'));
+
+        //Finds index of user in array from file
+        let i = IndexOfUser(userId, matchmakingFile);
+
+        //Creates new object for this user from matchmaking-class
+        let newMatchmaking = new Matchmaking(userId, matchmakingFile[i].matches, matchmakingFile[i].likes, matchmakingFile[i].dislikes, matchmakingFile[i].likedBy, matchmakingFile[i].dislikedBy);
+
+        //Find potential match
+        let potentialMatch = newMatchmaking.findMatch(matchmakingFile);
+
+        if (potentialMatch === null) {
+            res.send(JSON.stringify({status: 'NOMATCHES'}));
+        } else {
+            //Gets index of potential match from files
+            let j = IndexOfUser(potentialMatch, userFile);
+            let k = IndexOfUser(potentialMatch, interestFile);
+
+            //Creates new object for potential match user from user-class
+            //Password is unneeded
+            let newMatchUser = new FreeUser(userFile[j].username, '', userFile[j].firstName, userFile[j].lastName, userFile[j].birthday, userFile[j].gender);
+
+            //Gets age and fullname from potential match
+            let ageOfMatch = newMatchUser.getAge();
+            let fullNameOfMatch = newMatchUser.fullName(); 
+
+            //Data from potential match
+            let potentialMatchData = {
+                username: userFile[j].username,
+                fullname: fullNameOfMatch,
+                age: ageOfMatch,
+                gender: userFile[j].gender,
+                interests: interestFile[k].interestText
+            };
+
+            res.send(JSON.stringify(potentialMatchData));
+        };
+    };
+});
+
+app.post('/match/like', Verification, (req, res) => {
+
+    console.log(userId)
+    //Validates if user exists
+    if (userId === '') {
+        res.send(null);
+    } else {
+
+        //Get files for matchmaking, users and interest-information
+        let matchmakingFile = JSON.parse(fs.readFileSync('../storage/matchmaking.json'));
+
+        //Finds index of user in array from file
+        let i = IndexOfUser(userId, matchmakingFile);
+
+        //Creates new object for this user from matchmaking-class
+        let newMatchmaking = new Matchmaking(userId, matchmakingFile[i].matches, matchmakingFile[i].likes, matchmakingFile[i].dislikes, matchmakingFile[i].likedBy, matchmakingFile[i].dislikedBy);
+
+        let likeName = req.body.matchname;
+
+        newMatchmaking.like(likeName, matchmakingFile);
+        
+        let ifMatch = newMatchmaking.checkForMatch(likeName, matchmakingFile);
+
+        if(ifMatch === 1) {
+            let data = {
+                match: 'Du har matched!'
+            };
+
+            fs.writeFileSync('../storage/matchmaking.json', JSON.stringify(matchmakingFile));
+
+            res.send(JSON.stringify(data));
+        } else {
+            fs.writeFileSync('../storage/matchmaking.json', JSON.stringify(matchmakingFile));
+            res.send(JSON.stringify({status: 'OK'}));
+        };
+    };
+});
+
+app.post('/match/dislike', Verification, (req, res) => {
+
+    //Validates if user exists
+    if (userId === '') {
+        res.send(null);
+    } else {
+
+        //Get files for matchmaking, users and interest-information
+        let matchmakingFile = JSON.parse(fs.readFileSync('../storage/matchmaking.json'));
+
+        //Finds index of user in array from file
+        let i = IndexOfUser(userId, matchmakingFile);
+
+        //Creates new object for this user from matchmaking-class
+        let newMatchmaking = new Matchmaking(userId, matchmakingFile[i].matches, matchmakingFile[i].likes, matchmakingFile[i].dislikes, matchmakingFile[i].likedBy, matchmakingFile[i].dislikedBy);
+
+        let dislikeName = req.body.matchname;
+
+        newMatchmaking.dislike(dislikeName, matchmakingFile);
+        
+        fs.writeFileSync('../storage/matchmaking.json', JSON.stringify(matchmakingFile));
+
+        res.send(JSON.stringify({status: 'OK'}));
+
+    };
 });
 
 app.post('/interests/post', Verification, (req, res) => {
@@ -199,8 +317,6 @@ app.post('/interests/post', Verification, (req, res) => {
     };
 
 });
-
-
 
 
 

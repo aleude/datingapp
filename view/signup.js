@@ -119,14 +119,14 @@ signUp.addEventListener('click', ()=> {
             firstname: firstName.value,
             lastname: lastName.value,
             birthday: birthday.value,
-            gender: gender.value
+            gender: checkRadioBtn(gender)
         };
 
         //Request call to server
         xhr.addEventListener('readystatechange', function() {
             if (this.readyState === 4) {
-                let res = this.response;
-                if (res == null) {
+                const res = this.response;
+                if (res.status === 'OK') {
                     errorMessage.innerHTML = 'Username already exists!';
                 } else {
                     errorMessage.innerHTML = 'User has been created!'
@@ -148,24 +148,3 @@ signUp.addEventListener('click', ()=> {
         xhr.send(JSON.stringify(newUserForm));
     };
 });
-
-
-//Sign up part:
-
-/*
-1) Tag alt data fra HTML og lav det til JSON
-2) Send alt data til serveren
-3) Serveren validere, om useren eksisterer eller ej
-4) Eksisterer useren ikke skrives denne user i alle 4 json-filer
-5) Når useren er skrevet signes og sendes
-en JWT-token retur med username som payload til klienten.
-6) I klienten (efter if-statement) gemmes denne JWT token i localStroage
-7) Lige efter redirectes useren til main.html
-
-4a) Eksisterer useren sendes en boolean tilbage like (req.fejl === true)
-5a) I klineten håndteres dette med if-statement, og hvis boolean er true,
-så gives en fejlbesked til gennem innerHTML til p-tagget
-
-MÅSKE return null i stedet for bool
-
-*/

@@ -7,17 +7,17 @@ let newUserMatch2 = new Matchmaking('joe1998',[],[],[],[],[]);
 let newUserMatch3 = new Matchmaking('ida1999',[],[],[],[],[]);
 let newUserMatch4 = new Matchmaking('pablo',[],[],[],[],[]);
 
-let matchFileJSON = fs.readFileSync('../stroage/matchmaking.json');
+let matchFileJSON = fs.readFileSync('../storage/matchmaking.json');
 let matchFile = JSON.parse(matchFileJSON);
 
 
 
-fs.writeFileSync('../stroage/matchmaking.json', JSON.stringify([]));
+//fs.writeFileSync('../storage/matchmaking.json', JSON.stringify([]));
 
-
-matchFileJSON = fs.readFileSync('../stroage/match.json');
-matchFile = JSON.parse(matchFileJSON);
 /*
+matchFileJSON = fs.readFileSync('../storage/matchmaking.json');
+matchFile = JSON.parse(matchFileJSON);
+
 
 matchFile.push(newUserMatch1)
 matchFile.push(newUserMatch2)
@@ -32,13 +32,14 @@ newUserMatch4.like(newUserMatch2.username, matchFile);
 newUserMatch4.like(newUserMatch3.username, matchFile);
 newUserMatch2.like(newUserMatch4.username, matchFile);
 
-
 */
 
 
 
+
+
 //To push
-let k = 1;
+let k = 0;
 
 let newUser = new Matchmaking(matchFile[k].username,matchFile[k].matches,matchFile[k].likes,matchFile[k].dislikes,matchFile[k].likedBy,matchFile[k].dislikedBy);
 
@@ -47,18 +48,19 @@ let newUser = new Matchmaking(matchFile[k].username,matchFile[k].matches,matchFi
 
 //newUser.like(counterUser, matchFile)
 
-newUser.checkForMatch('pablo');
+//newUser.checkForMatch('pablo');
 
-newUser.deleteUser(matchFile);
+//newUser.deleteUser(matchFile);
 
 //console.log(newUser)
 
 
-console.log(matchFile);
 
+
+console.log(matchFile);
+console.log(newUser.findMatch(matchFile));
 
 //Writes
-fs.writeFileSync('../stroage/matchmaking.json', JSON.stringify(matchFile));
-
+//fs.writeFileSync('../storage/matchmaking.json', JSON.stringify(matchFile));
 
 
