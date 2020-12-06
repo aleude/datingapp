@@ -485,6 +485,31 @@ app.delete('/user/delete', Verification, (req, res) => {
 
 });
 
+app.get('/interests/get', Verification, (req, res) => {
+
+    //If something went wrong and no user was found in verification
+    if(userId === '') {
+        res.send(null)
+
+    } else {
+
+        //Get file of userinterests
+        let iFile = JSON.parse(fs.readFileSync('../storage/interest.json'));
+    
+        //Finds index of user in array from file
+        let i = IndexOfUser(userId, iFile);
+
+        let data = {
+            text: iFile[i].interestText
+        };
+
+        //Send information back to client
+        res.send(JSON.stringify(data));
+
+    };
+
+});
+
 
 app.post('/interests/post', Verification, (req, res) => {
 
@@ -508,6 +533,32 @@ app.post('/interests/post', Verification, (req, res) => {
 
         //Just responding with something else than null
         res.send(JSON.stringify({status: 'OK'}));
+    };
+
+});
+
+app.put('/interests/update', Verification, (req, res) => {
+
+    //If something went wrong and no user was found in verification
+    if(userId === '') {
+        res.send(null)
+
+    } else {
+
+        //Get file of user
+        let iFile = JSON.parse(fs.readFileSync('../storage/interest.json'));
+
+        //Finds index of user in array from file
+        let i = IndexOfUser(userId, iFile);
+
+        //Updates file with new user information
+        iFile[i].interestText = req.body.text;
+
+        fs.writeFileSync('../storage/interest.json', JSON.stringify(iFile));
+
+        //Send information back to client
+        res.send(JSON.stringify({data: 'OK'}));
+
     };
 
 });
