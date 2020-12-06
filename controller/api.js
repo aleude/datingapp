@@ -194,6 +194,7 @@ app.get('/match/getmatch', Verification, (req, res) => {
         //Creates new object for this user from matchmaking-class
         let newMatchmaking = new Matchmaking(userId, matchmakingFile[i].matches, matchmakingFile[i].likes, matchmakingFile[i].dislikes, matchmakingFile[i].likedBy, matchmakingFile[i].dislikedBy);
 
+
         //Find potential match
         let potentialMatch = newMatchmaking.findMatch(matchmakingFile);
 
@@ -220,7 +221,6 @@ app.get('/match/getmatch', Verification, (req, res) => {
                 gender: userFile[j].gender,
                 interests: interestFile[k].interestText
             };
-
             res.send(JSON.stringify(potentialMatchData));
         };
     };
@@ -271,7 +271,7 @@ app.post('/match/dislike', Verification, (req, res) => {
         res.send(null);
     } else {
 
-        //Get files for matchmaking, users and interest-information
+        //Get files for matchmaking
         let matchmakingFile = JSON.parse(fs.readFileSync('../storage/matchmaking.json'));
 
         //Finds index of user in array from file
@@ -291,10 +291,204 @@ app.post('/match/dislike', Verification, (req, res) => {
     };
 });
 
+app.get('/match/matchlist', Verification, (req, res) => {
+
+    //Validates if user exists or not
+    if (userId === '') {
+        res.send(null);
+    } else {
+
+        //Get files for matchmaking and user information
+        let matchmakingFile = JSON.parse(fs.readFileSync('../storage/matchmaking.json'));
+        let userFile = JSON.parse(fs.readFileSync('../storage/user.json'));
+
+        //Finds index of user in array from file
+        let i = IndexOfUser(userId, matchmakingFile);
+
+        //Creates new object for this user from matchmaking-class
+        let listOfMatches = matchmakingFile[i].matches;
+
+        //Checks if there is any matches at all
+        if (listOfMatches.length >= 1) {
+
+            //Array to be filled with matches and their information
+            let arr = [];
+
+            for (let i=0; i<listOfMatches.length; i++) {
+
+                let matchId = listOfMatches[i];
+
+                let matchIndex = IndexOfUser(matchId, userFile);
+                
+                //Creates new object from matchname. Password aren't needed
+                let matchUser = new FreeUser(matchId, '', userFile[matchIndex].firstName, userFile[matchIndex].lastName, userFile[matchIndex].birthday, userFile[matchIndex].gender);
+
+                //Pushes new sub-array with matchUser informaton
+                arr.push([matchUser.username, matchUser.fullName(), matchUser.getAge()]);
+
+            };
+
+            //Sends back array with match user information to client.
+            res.send(JSON.stringify(arr));
+        } else {
+            res.send(null);
+        }
+    };
+});
+
+app.delete('/match/delete', Verification, (req, res) => {
+
+    //If something went wrong and no user was found in verification
+    if(userId === '') {
+        res.send(null)
+
+    } else {
+
+        //Get file of matchmaking
+        let mFile = JSON.parse(fs.readFileSync('../storage/matchmaking.json'));
+
+        //Boolean to check if match id is correct
+        let matchNameOK = false;
+    
+        //Finds index of user in array from file
+        let i = IndexOfUser(userId, mFile);
+
+        //Create new object from file
+        let thisUser = new Matchmaking(userId, mFile[i].matches, mFile[i].likes, mFile[i].dislikes, mFile[i].likedBy, mFile[i].dislikedBy);
+
+        //Get name of match to be removed
+        let matchId = req.body.matchname;
+
+        //Check if match name is reliable
+        for (let j=0; j<mFile[i].matches.length; i++) {
+
+            if (matchId === mFile[i].matches[j]) {
+                matchNameOK = true;
+                break;
+            };
+        };
+
+        if (matchNameOK) {
+
+            //Delete match
+            thisUser.deleteMatch(matchId, mFile);
+
+            fs.writeFileSync('../storage/matchmaking.json', JSON.stringify(mFile));
+
+            res.send(JSON.stringify({data: 'OK'}));
+
+        } else {
+
+            res.send(null);
+        };
+
+    };
+
+});
+
+app.get('/user/info', Verification, (req, res) => {
+
+    //If something went wrong and no user was found in verification
+    if(userId === '') {
+        res.send(null)
+
+    } else {
+
+        //Get file of user
+        let uFile = JSON.parse(fs.readFileSync('../storage/user.json'));
+    
+        //Finds index of user in array from file
+        let i = IndexOfUser(userId, uFile);
+
+        //Create new object from user
+        let thisUser = new FreeUser(userId, uFile[i].password, uFile[i].firstName, uFile[i].lastName, '', '');
+
+        let data = {
+            userId: thisUser.username,
+            password: thisUser.password,
+            firstname: thisUser.firstName,
+            lastname: thisUser.lastName
+        };
+
+        //Send information back to client
+        res.send(JSON.stringify(data));
+
+    };
+
+});
+
+app.put('/user/update', Verification, (req, res) => {
+
+    //If something went wrong and no user was found in verification
+    if(userId === '') {
+        res.send(null)
+
+    } else {
+
+        //Get file of user
+        let uFile = JSON.parse(fs.readFileSync('../storage/user.json'));
+
+        //Finds index of user in array from file
+        let i = IndexOfUser(userId, uFile);
+
+        //Updates file with new user information
+        uFile[i].firstName = req.body.firstname;
+        uFile[i].lastName = req.body.lastname;
+        uFile[i].password = req.body.password;
+
+
+        fs.writeFileSync('../storage/user.json', JSON.stringify(uFile));
+
+        //Send information back to client
+        res.send(JSON.stringify({data: 'OK'}));
+
+    };
+
+});
+
+app.delete('/user/delete', Verification, (req, res) => {
+
+    //If something went wrong and no user was found in verification
+    if(userId === '') {
+        res.send(null)
+
+    } else {
+
+        //Get files for matchmaking, users and interest-information
+        let mFile = JSON.parse(fs.readFileSync('../storage/matchmaking.json'));
+        let uFile = JSON.parse(fs.readFileSync('../storage/user.json'));
+        let iFile = JSON.parse(fs.readFileSync('../storage/interest.json'));
+
+        //Finds index of this user in all files
+        let mIndex = IndexOfUser(userId, mFile);
+        let uIndex = IndexOfUser(userId, uFile);
+        let iIndex = IndexOfUser(userId, iFile);
+
+        //Create new user as object from classes
+        let newUser = new FreeUser(userId, uFile[uIndex].password, uFile[uIndex].firstName, uFile[uIndex].lastName, uFile[uIndex].birthday, uFile[uIndex].gender);
+        let newMatchmaking = new Matchmaking(userId, mFile[mIndex].matches, mFile[mIndex].likes, mFile[mIndex].dislikes, mFile[mIndex].likedBy, mFile[mIndex].dislikedBy);
+        let newInterest  = new Interest(userId, iFile[iIndex].interestText);
+
+        //Delete user from files
+        newUser.deleteUser(uFile);
+        newMatchmaking.deleteUser(mFile);
+        newInterest.deleteUser(iFile);
+
+        //Updates/Overwrites files
+        fs.writeFileSync('../storage/user.json', JSON.stringify(uFile));
+        fs.writeFileSync('../storage/matchmaking.json', JSON.stringify(mFile));
+        fs.writeFileSync('../storage/interest.json', JSON.stringify(iFile));
+
+        res.send(JSON.stringify({data: 'OK'}));
+
+    };
+
+});
+
+
 app.post('/interests/post', Verification, (req, res) => {
 
     //If something went wrong and no user was found in verification
-
     if(userId === '') {
         res.send(null)
 

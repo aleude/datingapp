@@ -11,7 +11,7 @@
     flex-direction: column;
 }
 
-#save, #deleteuser, #interests-btn{
+#save-btn, #deleteuser-btn, #interests-btn{
     margin-top: 5px;
     padding: 10px;
     background-color: white;

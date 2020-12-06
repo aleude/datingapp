@@ -8,9 +8,14 @@ let nameOfMatch = document.getElementById('fullname-match');
 let ageOfMatch = document.getElementById('age-match');
 let genderOfMatch = document.getElementById('gender-match');
 let interestsOfMatch = document.getElementById('interests-match');
+let interestsHeader = document.getElementById('interests-header');
+let profilePic = document.getElementById('profile-picture');
 let dislikeBtn = document.getElementById('dislike');
 let undecidedBtn = document.getElementById('undecided');
 let likeBtn = document.getElementById('like');
+
+let bottomDiv = document.getElementById('div-to-no-matches');
+
 
 //-F Functions and variables:
 
@@ -31,8 +36,30 @@ function matchmaking() {
             if (res.status === 'NOMATCHES') {
 
                 usernameMatch = '';
+                //Removes all elements unused
+                
+                nameOfMatch.remove();
+                ageOfMatch.remove();
+                genderOfMatch.remove();
+                interestsOfMatch.remove();
+                dislikeBtn.remove();
+                undecidedBtn.remove();
+                likeBtn.remove();
+                profilePic.remove();
+                interestsHeader.remove();
+                //Virker ikke endnu
+                /*
+                let h1 = document.createElement('h1');
+                h1.innerHTML = 'No more matches to show right now';
+                h1.id = 'no-matches-h1';
+                bottomDiv.appendChild(h1);
+                */
+
                 alert('Couldnt find any matches');
                 //Her skal der laves node kodeværk, så det kan ses på main-pages.
+
+
+
 
             } else {
 
@@ -110,7 +137,7 @@ logoutBtn.addEventListener('click', ()=> {
     if (localStorage.getItem('JWT')) {
         localStorage.removeItem('JWT');
     }
-    window.location.href = './index.html';
+    location.replace('./index.html');
 });
 
 undecidedBtn.addEventListener('click', ()=> {
@@ -174,6 +201,7 @@ likeBtn.addEventListener('click', ()=> {
         xhr.addEventListener('readystatechange', function(){
             if (this.readyState === 4) {
                 let res = this.response;
+                console.log(res);
                 if (res === null) {
 
                     alert('Something went wrong');

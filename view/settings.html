@@ -11,13 +11,13 @@
     <div class="wrapper">
         <div class="header">
             <div class="headerleft">
-                <button type="button" class="home-btn">Home</button>
+                <button type="button" id="home-btn">Home</button>
             </div>
             <div class="headermiddle">
                 <img class="logo" src="images/datingapp-logo.png">
             </div>
             <div class="headerright">
-                <button type="button" class="logout-btn">Log out</button> 
+                <button type="button" id="logout-btn">Log out</button> 
             </div>
         </div> 
         <div class="main">
@@ -31,19 +31,12 @@
                         <input type="text" id="firstname"></input>
                     <h3>Last name</h2>
                         <input type="text" id="lastname"></input>
-                    <h3>Age</h2>
-                        <input type="date" id="age"></input>
-                    <h3>Gender</h3>
-                    <div>
-                        <input type="radio" name="gender" value="Male">Male</input>
-                        <input type="radio" name="gender" value="Female">Female</input>
-                    </div>
                     <h3>Password</h2>
                     <input type="password" id="password"></input>
                     <p id="passwordvalidate">_</p>
-                    <button type="submit" id="save">Sign up</button>
+                    <button type="button" id="save-btn">Save changes</button>
                     <p id="errormessage">Error</p>
-                    <button type="button" id="deleteuser">Delete your profile</button>
+                    <button type="button" id="deleteuser-btn">Delete your profile</button>
                 </form>
                </div>
             </div>
