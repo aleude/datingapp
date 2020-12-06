@@ -11,7 +11,7 @@ let saveBtn = document.getElementById('save-btn');
 let deleteUserBtn = document.getElementById('deleteuser-btn');
 let errorMessageTag = document.getElementById('errormessage');
 
-//- Functions & Variables
+//- Functions & Variables used throughout the document
 let noError = true;
 let errorMessage = '';
 
@@ -26,21 +26,26 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
-        
+
+        //Gets token
         let token = localStorage.getItem('JWT');
-        console.log(token);
+
         xhr.addEventListener('readystatechange', function(){
             if (this.readyState === 4) {
+
                 const res = this.response;
+
                 //If user wasn't found, redirect to login
-                if (res === null) {
+                if (res.status === 404) {
+
                     location.replace('./index.html');
-                } else {
+
+                } else if (res.status === 200) {
 
                     //Add user information to input fields
-                    firstNameInput.value += res.firstname;
-                    lastNameInput.value += res.lastname;
-                    passwordInput.value += res.password;
+                    firstNameInput.value = res.firstname;
+                    lastNameInput.value = res.lastname;
+                    passwordInput.value = res.password;
                 
                 };
             };
@@ -58,25 +63,31 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
 });
 
+//Directs to main page
 homeBtn.addEventListener('click', () => {
 
     window.location.href = './main.html';
+
 });
 
+//Logging out user
 logoutBtn.addEventListener('click', () => {
 
     if (localStorage.getItem('JWT')) {
         localStorage.removeItem('JWT');
     }
     location.replace('./index.html');
+
 });
 
+//Directs to interest update page
 interestsBtn.addEventListener('click', () => {
 
     window.location.href = './interests.html';
 
 })
 
+//Save users updated input
 saveBtn.addEventListener('click', () => {
 
     //Validates if password is ok
@@ -97,12 +108,16 @@ saveBtn.addEventListener('click', () => {
         errorMessage += 'Your last name is missing. ';
     };
 
+    //If validation went fine
     if(noError) {
+
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
     
+        //Gets token
         let token = localStorage.getItem('JWT');
-    
+        
+        //Gets data from user
         let data = {
             firstname: firstNameInput.value,
             lastname: lastNameInput.value,
@@ -110,13 +125,19 @@ saveBtn.addEventListener('click', () => {
         };
     
         xhr.addEventListener('readystatechange', function(){
+
             if (this.readyState === 4) {
-                let res = this.response;
-                if (res === null) {
+
+                const res = this.response;
+
+                if (res.status === 404) {
+
                     alert(`Something went wrong, couldn't update profile`);
+               
                 } else {
 
                     //Reload site if everything went well
+                    alert('Your user has now been updated');
                     location.reload();
                 
                 };
@@ -136,20 +157,29 @@ saveBtn.addEventListener('click', () => {
 
 });
 
+//Deletes an user
 deleteUserBtn.addEventListener('click', () => {
 
     const xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     
+    //Gets token
     let token = localStorage.getItem('JWT');
     
     xhr.addEventListener('readystatechange', function(){
+
         if (this.readyState === 4) {
+
             let res = this.response;
-            if (res === null) {
+
+            if (res.status === 404) {
+
+                //If user couldn't be deleted
                 alert(`Something went wrong, couldn't delete profile`);
+
             } else {
 
+                //If the deletion went fine
                 alert('Your user is now deleted');
                 location.replace('./index.html');
 

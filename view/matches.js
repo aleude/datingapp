@@ -3,13 +3,18 @@ let homeBtn = document.getElementById('home-btn');
 let logoutBtn = document.getElementById('logout-btn');
 
 //- Elements from body:
+let mainDiv = document.getElementById('main-div');
 let tableForMatches = document.getElementById('match-table');
 let deleteMatchInput = document.getElementById('delete-match-input');
 let deleteMatchBtn = document.getElementById('delete-match-button');
 let deleteMatchMessage = document.getElementById('delete-match-message');
 
+//- Creates new elements:
+let noMatchesToShow = document.createElement('h1');
 
 //- Functions
+
+//Gets a list of matches
 function getInfoOfMatches() {
 
     const xhr = new XMLHttpRequest();
@@ -20,28 +25,31 @@ function getInfoOfMatches() {
 
     xhr.addEventListener('readystatechange', function(){
         if (this.readyState === 4) {
+
             const res = this.response;
-            if (res !== null) {
+
+            if (res.status !== 'NO-MATCHES') {
 
                 //Return list with information of matches
-                //return res;
-                console.log(res);
-
                 for (let i=0; i < res.length; i++) {
+
                     tableForMatches.innerHTML += '<tr><td>'+res[i][0]+'</td><td>'+res[i][1]+'</td><td>'+res[i][2]+'</td></tr>';
                 };
 
             } else {
-
-                //Returns null if nothing was found
-                alert('There is no matches to show');
+                console.log('And also here')
+                //If no matches was found, informs user
+                mainDiv.innerHTML = '';
+                noMatchesToShow.textContent = `You haven't matched with anyone yet. Keep looking!`; 
+                mainDiv.append(noMatchesToShow);
+                noMatchesToShow.setAttribute('id', 'no-matches-h1');
             
             };
             
         };
     });
 
-    xhr.open('GET', 'http://localhost:3800/match/matchlist', true);
+    xhr.open('GET', 'http://localhost:3800/match/list', true);
     xhr.setRequestHeader('Authorization', token);
     xhr.send();
 };
@@ -58,16 +66,21 @@ document.addEventListener('DOMContentLoaded', ()=> {
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
         
+        //Gets token
         let token = localStorage.getItem('JWT');
-        console.log(token);
+
         xhr.addEventListener('readystatechange', function(){
             if (this.readyState === 4) {
+
                 const res = this.response;
+
                 //If user wasn't found, redirect to login
-                if (res === null) {
+                if (res.status === 404) {
+
                     location.replace('./index.html');
                 } else {
 
+                    //If everything is ok, get info of matches
                     getInfoOfMatches();
                 
                 };
@@ -86,35 +99,47 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
 });
 
+//Directs to main page
 homeBtn.addEventListener('click', ()=> {
 
     window.location.href = './main.html';
+
 });
 
+//Logging user out
 logoutBtn.addEventListener('click', ()=> {
 
     if (localStorage.getItem('JWT')) {
         localStorage.removeItem('JWT');
     }
     location.replace('./index.html');
+
 });
 
+//Deletes a match
 deleteMatchBtn.addEventListener('click', ()=> {
 
     const xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
+    //Gets token
     let token = localStorage.getItem('JWT');
 
+    //Gets the delete match name from input
     let deleteMatchUser = {
         matchname: deleteMatchInput.value
     };
 
     xhr.addEventListener('readystatechange', function(){
         if (this.readyState === 4) {
+
             let res = this.response;
-            if (res === null) {
+
+            if (res.status === 404) {
+
+                //If something went wrong
                 alert(`Couldn't delete match. Check if Match ID is correct`);
+            
             } else {
                 
                 //Reload page if everything went fine

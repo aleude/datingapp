@@ -4,6 +4,7 @@ let settingsBtn = document.getElementById('settings-btn');
 let logoutBtn = document.getElementById('logout-btn');
 
 //- Elements from body:
+let mainDiv = document.getElementById('main-div');
 let nameOfMatch = document.getElementById('fullname-match');
 let ageOfMatch = document.getElementById('age-match');
 let genderOfMatch = document.getElementById('gender-match');
@@ -13,16 +14,20 @@ let profilePic = document.getElementById('profile-picture');
 let dislikeBtn = document.getElementById('dislike');
 let undecidedBtn = document.getElementById('undecided');
 let likeBtn = document.getElementById('like');
-
 let bottomDiv = document.getElementById('div-to-no-matches');
 
+//- Creates new elements:
+let noMoreMatchesH1 = document.createElement('h1');
 
-//-F Functions and variables:
 
-usernameMatch = '';
+//- Functions and variables:
 
-//Function getting a potential random match
+//Variable used throughout the document of matchUser
+let usernameMatch = '';
+
+//Function to get a random but potential match
 function matchmaking() {
+
     const xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
 
@@ -30,42 +35,28 @@ function matchmaking() {
     let token = localStorage.getItem('JWT');
 
     xhr.addEventListener('readystatechange', function(){
+
         if (this.readyState === 4) {
+
             const res = this.response;
-            //HVER OPMÆRKSOM PÅ RES.SEND(NULL) I API
-            if (res.status === 'NOMATCHES') {
 
+            //Validates if any potential matches or not was found
+            if (res.status === 'empty') {
+
+                //Remove all items and display text to inform user
                 usernameMatch = '';
-                //Removes all elements unused
-                
-                nameOfMatch.remove();
-                ageOfMatch.remove();
-                genderOfMatch.remove();
-                interestsOfMatch.remove();
-                dislikeBtn.remove();
-                undecidedBtn.remove();
-                likeBtn.remove();
-                profilePic.remove();
-                interestsHeader.remove();
-                //Virker ikke endnu
-                /*
-                let h1 = document.createElement('h1');
-                h1.innerHTML = 'No more matches to show right now';
-                h1.id = 'no-matches-h1';
-                bottomDiv.appendChild(h1);
-                */
-
-                alert('Couldnt find any matches');
-                //Her skal der laves node kodeværk, så det kan ses på main-pages.
-
-
+                mainDiv.innerHTML = '';
+                noMoreMatchesH1.textContent = 'There is no more potential matches to show. Wait for new users to join';
+                mainDiv.append(noMoreMatchesH1);
+                noMoreMatchesH1.setAttribute('id', 'no-users-h1');
 
 
             } else {
 
-                //Sets variabel to username of potental match
+                //Sets name of potential match
                 usernameMatch = res.username;
-                //Updated page with potential match
+
+                //Updated page with potential match info
                 nameOfMatch.innerHTML = res.fullname;
                 ageOfMatch.innerHTML = res.age;
                 genderOfMatch.innerHTML = res.gender;
@@ -74,7 +65,7 @@ function matchmaking() {
         };
     });
 
-    xhr.open('GET', 'http://localhost:3800/match/getmatch', true);
+    xhr.open('GET', 'http://localhost:3800/match/get', true);
     xhr.setRequestHeader('Authorization', token);
     xhr.send();
 
@@ -94,13 +85,16 @@ document.addEventListener('DOMContentLoaded', ()=> {
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
         
+        //Gets token
         let token = localStorage.getItem('JWT');
-        console.log(token);
+
         xhr.addEventListener('readystatechange', function(){
             if (this.readyState === 4) {
                 const res = this.response;
+
                 //If user wasn't found, redirect to login
-                if (res === null) {
+                if (res.status === 404) {
+
                     location.replace('./index.html');
                 } else {
                     
@@ -123,13 +117,17 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
 });
 
-//Eventlisteners for buttons in header
+//Eventlisteners for buttons in header:
 matchBtn.addEventListener('click', ()=> {
+
     window.location.href = './matches.html';
+
 });
 
 settingsBtn.addEventListener('click', ()=> {
+
     window.location.href = './settings.html';
+
 });
 
 logoutBtn.addEventListener('click', ()=> {
@@ -140,35 +138,45 @@ logoutBtn.addEventListener('click', ()=> {
     location.replace('./index.html');
 });
 
+//Doing matchmaking again if user cliced undecided
 undecidedBtn.addEventListener('click', ()=> {
 
     matchmaking();
 
 });
 
-//MISSING comments from here on:::
-
+//Dislike button:
 dislikeBtn.addEventListener('click', ()=> {
+
+    //Validates if potential match username is not empty
     if (usernameMatch !== '') {
 
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
 
+        //Gets token
         let token = localStorage.getItem('JWT');
 
+        //Gets username of potential match
         let data = {
-            matchname: usernameMatch,
-            action: dislike
+            matchname: usernameMatch
         };
         
         xhr.addEventListener('readystatechange', function(){
             if (this.readyState === 4) {
-                let res = this.response;
-                if (res === null) {
+
+                const res = this.response;
+
+                if (res.status === 404) {
+
                     alert('Something went wrong');
                     location.replace('./index.html');
+
                 } else {
+
+                    //If user is disliked, find new match
                     matchmaking();
+
                 };
             };
         });
@@ -179,12 +187,15 @@ dislikeBtn.addEventListener('click', ()=> {
         xhr.send(JSON.stringify(data));
 
     } else {
-
-    matchmaking();
+    
+        //If something went wrong with username of potential match, find new potential match
+        matchmaking();
 
     };
 });
 
+
+//Like button
 likeBtn.addEventListener('click', ()=> {
     if (usernameMatch !== '') {
 
@@ -200,19 +211,28 @@ likeBtn.addEventListener('click', ()=> {
         console.log(usernameMatch);
         xhr.addEventListener('readystatechange', function(){
             if (this.readyState === 4) {
-                let res = this.response;
-                console.log(res);
-                if (res === null) {
+
+                const res = this.response;
+                
+
+                if (res.status === 404) {
 
                     alert('Something went wrong');
-                    //location.replace('./index.html');
+                    location.replace('./index.html');
 
-                } else if (res.match) { //Ikke 100 på den virker
+                } else if (res.status === 201) { //Ikke 100 på den virker
+                    
+                    //If a match was created, notify user
                     alert(`NICE!! You've now matched with ${usernameMatch}`);
+
                     matchmaking();
+
                 } else {
+
+                    //If no match was created, find a new potential match
                     matchmaking();
-                }
+
+                };
             };
         });
         
@@ -223,8 +243,10 @@ likeBtn.addEventListener('click', ()=> {
 
     } else {
 
+    //If something went wrong with potential match user. Find a new one
     matchmaking();
 
     };
+
 });
 

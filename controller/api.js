@@ -10,6 +10,7 @@ const FreeUser = require('../model/user-model');
 const Matchmaking = require('../model/matchmaking-model');
 const Interest = require('../model/interest-model');
 const { nextTick } = require('process');
+const { resolveSoa } = require('dns');
 
 //- Setting up server:
 const app = express();
@@ -65,9 +66,12 @@ function Verification(req, res, next) {
                 let userIndexInFile = IndexOfUser(userId, userFile);
 
                 if (userIndexInFile >= 0) {
- 
+                    
+                    //If user was found, move on
                     return next();  
                 } else {
+
+                    //if user wasn't found, reset user id.
                     userId = '';
                     return next();
                 };
@@ -88,10 +92,11 @@ function Verification(req, res, next) {
 app.get('/checkuser', Verification, (req, res) => {
 
     if (userId === '') {
-        res.send(null);
+
+        res.send(JSON.stringify({status: 404}));
     } else {
-        //Just sending something else than null
-        res.send(JSON.stringify({status: 'OK'}));
+
+        res.send(JSON.stringify({status: 200}));
     };
 });
 
@@ -116,24 +121,28 @@ app.post('/login', (req, res) => {
 
             //Signs a JWT with username (ID of user) as payload
             let token = jwt.sign({userId: req.body.username}, privateKeyJWT, {algorithm: 'HS256'});
+    
             res.send(JSON.stringify(token));
 
         } else {
-            res.send(JSON.stringify({status: 'OK'}));
+            res.send(JSON.stringify({status: 404}));
         };
     } else {
-        res.send(JSON.stringify({status: 'OK'}));
+        res.send(JSON.stringify({status: 404}));
     };
 
 });
 
 app.post('/signup', (req, res) => {
 
+    //Sets foundUser to false
     let foundUser = false;
-    let userFile = JSON.parse(fs.readFileSync('../storage/user.json'));
+
+    //Gets user file
+    let uFile = JSON.parse(fs.readFileSync('../storage/user.json'));
     
     //Checks if user exists in file;
-    let i = IndexOfUser(req.body.username, userFile);
+    let i = IndexOfUser(req.body.username, uFile);
 
     //Validates if a user was found or not in file
     if (i>=0) {
@@ -142,24 +151,25 @@ app.post('/signup', (req, res) => {
 
     //Code for if a user was found
     if (!foundUser) {
+
         //Create new user as object from classes
         let newUser = new FreeUser(req.body.username, req.body.password, req.body.firstname, req.body.lastname, req.body.birthday, req.body.gender);
         let newMatchmaking = new Matchmaking(req.body.username, [], [], [], [], []);
         let newInterest = new Interest(req.body.username, '');
 
         //Gets the rest of the files
-        let matchmakingFile = JSON.parse(fs.readFileSync('../storage/matchmaking.json'));
-        let interestFile = JSON.parse(fs.readFileSync('../storage/interest.json'));
+        let mFile = JSON.parse(fs.readFileSync('../storage/matchmaking.json'));
+        let iFile = JSON.parse(fs.readFileSync('../storage/interest.json'));
 
         //Pushes my new users into arrays from file
-        userFile.push(newUser);
-        matchmakingFile.push(newMatchmaking);
-        interestFile.push(newInterest);
+        uFile.push(newUser);
+        mFile.push(newMatchmaking);
+        iFile.push(newInterest);
 
         //Updates/Overwrites my files
-        fs.writeFileSync('../storage/user.json', JSON.stringify(userFile));
-        fs.writeFileSync('../storage/matchmaking.json', JSON.stringify(matchmakingFile));
-        fs.writeFileSync('../storage/interest.json', JSON.stringify(interestFile));
+        fs.writeFileSync('../storage/user.json', JSON.stringify(uFile));
+        fs.writeFileSync('../storage/matchmaking.json', JSON.stringify(mFile));
+        fs.writeFileSync('../storage/interest.json', JSON.stringify(iFile));
 
         //Signs a JWT with username (ID of user) as payload
         let token = jwt.sign({userId: req.body.username}, privateKeyJWT, {algorithm: 'HS256'});
@@ -167,8 +177,9 @@ app.post('/signup', (req, res) => {
         res.send(JSON.stringify(token));
 
     } else {
-        //If a user was found, returns null to client
-        res.send(JSON.stringify({status: 'OK'}));
+        //If a user was found, returns forbidden to client
+
+        res.send(JSON.stringify({status: 403}));
     };
 
 });
@@ -176,90 +187,101 @@ app.post('/signup', (req, res) => {
 //Matchmaking
 
 
-app.get('/match/getmatch', Verification, (req, res) => {
+app.get('/match/get', Verification, (req, res) => {
 
     //Validates if user exists
     if (userId === '') {
-        res.send(null);
+
+        res.send(JSON.stringify({status: 404}));
+
     } else {
 
-        //Get files for matchmaking, users and interest-information
-        let matchmakingFile = JSON.parse(fs.readFileSync('../storage/matchmaking.json'));
-        let userFile = JSON.parse(fs.readFileSync('../storage/user.json'));
-        let interestFile = JSON.parse(fs.readFileSync('../storage/interest.json'));
+        //Get all files needed
+        let mFile = JSON.parse(fs.readFileSync('../storage/matchmaking.json'));
+        let uFile = JSON.parse(fs.readFileSync('../storage/user.json'));
+        let iFile = JSON.parse(fs.readFileSync('../storage/interest.json'));
 
         //Finds index of user in array from file
-        let i = IndexOfUser(userId, matchmakingFile);
+        let i = IndexOfUser(userId, mFile);
 
         //Creates new object for this user from matchmaking-class
-        let newMatchmaking = new Matchmaking(userId, matchmakingFile[i].matches, matchmakingFile[i].likes, matchmakingFile[i].dislikes, matchmakingFile[i].likedBy, matchmakingFile[i].dislikedBy);
-
+        let newMatchmaking = new Matchmaking(userId, mFile[i].matches, mFile[i].likes, mFile[i].dislikes, mFile[i].likedBy, mFile[i].dislikedBy);
 
         //Find potential match
-        let potentialMatch = newMatchmaking.findMatch(matchmakingFile);
+        let potentialMatch = newMatchmaking.findMatch(mFile);
 
         if (potentialMatch === null) {
-            res.send(JSON.stringify({status: 'NOMATCHES'}));
+
+            res.send(JSON.stringify({status: 'empty'}));
+
         } else {
             //Gets index of potential match from files
-            let j = IndexOfUser(potentialMatch, userFile);
-            let k = IndexOfUser(potentialMatch, interestFile);
+            let j = IndexOfUser(potentialMatch, uFile);
+            let k = IndexOfUser(potentialMatch, iFile);
 
             //Creates new object for potential match user from user-class
             //Password is unneeded
-            let newMatchUser = new FreeUser(userFile[j].username, '', userFile[j].firstName, userFile[j].lastName, userFile[j].birthday, userFile[j].gender);
+            let newMatchUser = new FreeUser(uFile[j].username, '', uFile[j].firstName, uFile[j].lastName, uFile[j].birthday, uFile[j].gender);
 
             //Gets age and fullname from potential match
             let ageOfMatch = newMatchUser.getAge();
             let fullNameOfMatch = newMatchUser.fullName(); 
 
             //Data from potential match
-            let potentialMatchData = {
-                username: userFile[j].username,
+            let data = {
+                username: uFile[j].username,
                 fullname: fullNameOfMatch,
                 age: ageOfMatch,
-                gender: userFile[j].gender,
-                interests: interestFile[k].interestText
+                gender: uFile[j].gender,
+                interests: iFile[k].interestText
             };
-            res.send(JSON.stringify(potentialMatchData));
+
+            res.send(JSON.stringify(data));
         };
     };
 });
 
 app.post('/match/like', Verification, (req, res) => {
 
-    console.log(userId)
+
     //Validates if user exists
     if (userId === '') {
-        res.send(null);
+
+        res.send(JSON.stringify({status: 404}));
+
     } else {
 
         //Get files for matchmaking, users and interest-information
-        let matchmakingFile = JSON.parse(fs.readFileSync('../storage/matchmaking.json'));
+        let mFile = JSON.parse(fs.readFileSync('../storage/matchmaking.json'));
 
         //Finds index of user in array from file
-        let i = IndexOfUser(userId, matchmakingFile);
+        let i = IndexOfUser(userId, mFile);
 
         //Creates new object for this user from matchmaking-class
-        let newMatchmaking = new Matchmaking(userId, matchmakingFile[i].matches, matchmakingFile[i].likes, matchmakingFile[i].dislikes, matchmakingFile[i].likedBy, matchmakingFile[i].dislikedBy);
+        let newMatchmaking = new Matchmaking(userId, mFile[i].matches, mFile[i].likes, mFile[i].dislikes, mFile[i].likedBy, mFile[i].dislikedBy);
 
         let likeName = req.body.matchname;
 
-        newMatchmaking.like(likeName, matchmakingFile);
+        //Likes the potential user
+        newMatchmaking.like(likeName, mFile);
         
-        let ifMatch = newMatchmaking.checkForMatch(likeName, matchmakingFile);
+        //Checks if there is a match. Returns 0 for no and 1 for yes
+        let ifMatch = newMatchmaking.checkForMatch(likeName, mFile);
 
         if(ifMatch === 1) {
-            let data = {
-                match: 'Du har matched!'
-            };
 
-            fs.writeFileSync('../storage/matchmaking.json', JSON.stringify(matchmakingFile));
+            //Writes to file
+            fs.writeFileSync('../storage/matchmaking.json', JSON.stringify(mFile));
 
-            res.send(JSON.stringify(data));
+            res.status(201);
+            res.send(JSON.stringify({status: 201}));
+
         } else {
-            fs.writeFileSync('../storage/matchmaking.json', JSON.stringify(matchmakingFile));
-            res.send(JSON.stringify({status: 'OK'}));
+
+            //Writes to file
+            fs.writeFileSync('../storage/matchmaking.json', JSON.stringify(mFile));
+
+            res.send(JSON.stringify({status: 200}));
         };
     };
 });
@@ -268,7 +290,9 @@ app.post('/match/dislike', Verification, (req, res) => {
 
     //Validates if user exists
     if (userId === '') {
-        res.send(null);
+        
+        res.send(JSON.stringify({status: 404}));
+
     } else {
 
         //Get files for matchmaking
@@ -286,27 +310,29 @@ app.post('/match/dislike', Verification, (req, res) => {
         
         fs.writeFileSync('../storage/matchmaking.json', JSON.stringify(matchmakingFile));
 
-        res.send(JSON.stringify({status: 'OK'}));
+        res.send(JSON.stringify({status: 200}));
 
     };
 });
 
-app.get('/match/matchlist', Verification, (req, res) => {
+app.get('/match/list', Verification, (req, res) => {
 
     //Validates if user exists or not
     if (userId === '') {
-        res.send(null);
+
+        res.send(JSON.stringify({status: 404}));
+
     } else {
 
         //Get files for matchmaking and user information
-        let matchmakingFile = JSON.parse(fs.readFileSync('../storage/matchmaking.json'));
-        let userFile = JSON.parse(fs.readFileSync('../storage/user.json'));
+        let mFile = JSON.parse(fs.readFileSync('../storage/matchmaking.json'));
+        let uFile = JSON.parse(fs.readFileSync('../storage/user.json'));
 
         //Finds index of user in array from file
-        let i = IndexOfUser(userId, matchmakingFile);
+        let i = IndexOfUser(userId, mFile);
 
         //Creates new object for this user from matchmaking-class
-        let listOfMatches = matchmakingFile[i].matches;
+        let listOfMatches = mFile[i].matches;
 
         //Checks if there is any matches at all
         if (listOfMatches.length >= 1) {
@@ -314,14 +340,15 @@ app.get('/match/matchlist', Verification, (req, res) => {
             //Array to be filled with matches and their information
             let arr = [];
 
+            //Loops through the list of matches
             for (let i=0; i<listOfMatches.length; i++) {
 
                 let matchId = listOfMatches[i];
 
-                let matchIndex = IndexOfUser(matchId, userFile);
+                let matchIndex = IndexOfUser(matchId, uFile);
                 
                 //Creates new object from matchname. Password aren't needed
-                let matchUser = new FreeUser(matchId, '', userFile[matchIndex].firstName, userFile[matchIndex].lastName, userFile[matchIndex].birthday, userFile[matchIndex].gender);
+                let matchUser = new FreeUser(matchId, '', uFile[matchIndex].firstName, uFile[matchIndex].lastName, uFile[matchIndex].birthday, uFile[matchIndex].gender);
 
                 //Pushes new sub-array with matchUser informaton
                 arr.push([matchUser.username, matchUser.fullName(), matchUser.getAge()]);
@@ -330,9 +357,12 @@ app.get('/match/matchlist', Verification, (req, res) => {
 
             //Sends back array with match user information to client.
             res.send(JSON.stringify(arr));
+
         } else {
-            res.send(null);
-        }
+
+            res.send(JSON.stringify({status: 'NO-MATCHES'}));
+
+        };
     };
 });
 
@@ -340,7 +370,8 @@ app.delete('/match/delete', Verification, (req, res) => {
 
     //If something went wrong and no user was found in verification
     if(userId === '') {
-        res.send(null)
+
+        res.send(JSON.stringify({status: 404}));
 
     } else {
 
@@ -368,18 +399,23 @@ app.delete('/match/delete', Verification, (req, res) => {
             };
         };
 
+        //If matchname was reliable
         if (matchNameOK) {
 
             //Delete match
             thisUser.deleteMatch(matchId, mFile);
 
+            //Writes to file
             fs.writeFileSync('../storage/matchmaking.json', JSON.stringify(mFile));
 
-            res.send(JSON.stringify({data: 'OK'}));
+            res.send(JSON.stringify({status: 200}));
 
         } else {
 
-            res.send(null);
+            //If match name wasn't found in match array
+
+            res.send(JSON.stringify({status: 404}));
+
         };
 
     };
@@ -390,7 +426,8 @@ app.get('/user/info', Verification, (req, res) => {
 
     //If something went wrong and no user was found in verification
     if(userId === '') {
-        res.send(null)
+
+        res.send(JSON.stringify({status: 404}));
 
     } else {
 
@@ -407,7 +444,8 @@ app.get('/user/info', Verification, (req, res) => {
             userId: thisUser.username,
             password: thisUser.password,
             firstname: thisUser.firstName,
-            lastname: thisUser.lastName
+            lastname: thisUser.lastName,
+            status: 200
         };
 
         //Send information back to client
@@ -421,7 +459,8 @@ app.put('/user/update', Verification, (req, res) => {
 
     //If something went wrong and no user was found in verification
     if(userId === '') {
-        res.send(null)
+
+        res.send(JSON.stringify({status: 404}));
 
     } else {
 
@@ -436,11 +475,12 @@ app.put('/user/update', Verification, (req, res) => {
         uFile[i].lastName = req.body.lastname;
         uFile[i].password = req.body.password;
 
-
+        //Writes to file
         fs.writeFileSync('../storage/user.json', JSON.stringify(uFile));
 
         //Send information back to client
-        res.send(JSON.stringify({data: 'OK'}));
+
+        res.send(JSON.stringify({status: 200}));
 
     };
 
@@ -450,7 +490,8 @@ app.delete('/user/delete', Verification, (req, res) => {
 
     //If something went wrong and no user was found in verification
     if(userId === '') {
-        res.send(null)
+        
+        res.send(JSON.stringify({status: 404}));
 
     } else {
 
@@ -479,7 +520,7 @@ app.delete('/user/delete', Verification, (req, res) => {
         fs.writeFileSync('../storage/matchmaking.json', JSON.stringify(mFile));
         fs.writeFileSync('../storage/interest.json', JSON.stringify(iFile));
 
-        res.send(JSON.stringify({data: 'OK'}));
+        res.send(JSON.stringify({status: 200}));
 
     };
 
@@ -488,8 +529,9 @@ app.delete('/user/delete', Verification, (req, res) => {
 app.get('/interests/get', Verification, (req, res) => {
 
     //If something went wrong and no user was found in verification
-    if(userId === '') {
-        res.send(null)
+    if (userId === '') {
+
+        res.send(JSON.stringify({status: 404}));
 
     } else {
 
@@ -515,33 +557,35 @@ app.post('/interests/post', Verification, (req, res) => {
 
     //If something went wrong and no user was found in verification
     if(userId === '') {
-        res.send(null)
+        
+        res.send(JSON.stringify({status: 404}));
 
     } else {
 
         //Gets file with interests
-        let interestFile = JSON.parse(fs.readFileSync('../storage/interest.json'));
+        let iFile = JSON.parse(fs.readFileSync('../storage/interest.json'));
 
         //Finds index of user in array from file
-        let i = IndexOfUser(userId, interestFile);
+        let i = IndexOfUser(userId, iFile);
 
         //Signs the user text with key
-        interestFile[i].interestText = req.body.interests;
+        iFile[i].interestText = req.body.interests;
 
         //Updates the file
-        fs.writeFileSync('../storage/interest.json', JSON.stringify(interestFile));
+        fs.writeFileSync('../storage/interest.json', JSON.stringify(iFile));
 
         //Just responding with something else than null
-        res.send(JSON.stringify({status: 'OK'}));
+        res.send(JSON.stringify({status: 200}));
     };
 
 });
 
-app.put('/interests/update', Verification, (req, res) => {
+app.put('/interests/put', Verification, (req, res) => {
 
     //If something went wrong and no user was found in verification
     if(userId === '') {
-        res.send(null)
+
+        res.send(JSON.stringify({status: 404}));
 
     } else {
 
@@ -554,10 +598,11 @@ app.put('/interests/update', Verification, (req, res) => {
         //Updates file with new user information
         iFile[i].interestText = req.body.text;
 
+        //Writes to file
         fs.writeFileSync('../storage/interest.json', JSON.stringify(iFile));
 
         //Send information back to client
-        res.send(JSON.stringify({data: 'OK'}));
+        res.send(JSON.stringify({status: 200}));
 
     };
 

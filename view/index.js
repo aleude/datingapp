@@ -20,7 +20,7 @@ function validateUserInput() {
     };
 
     if (inputError) {
-        message = 'Your username or password is missing.';
+        message = 'Username or password is missing.';
         alert(message);
         //Should return false
         return inputError;
@@ -35,7 +35,8 @@ function validateUserInput() {
 
 //Eventlistener to redirect users who already are logged in or has a bad token
 document.addEventListener('DOMContentLoaded', ()=> {
-    //If users has a token, validates if the token is accepted
+
+    //If a token was found, validate token
     if(localStorage.getItem('JWT')) {
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
@@ -45,11 +46,13 @@ document.addEventListener('DOMContentLoaded', ()=> {
         xhr.addEventListener('readystatechange', function(){
             if (this.readyState === 4) {
                 const res = this.response;
-                console.log(res);
+
                 //If user wasn't found, reset token
-                if (res.status === 'OK') {
+                if (res.status === 404) {
                     localStorage.removeItem('JWT');
+
                 } else {
+
                     //If token i stored and user was found, go to main
                     location.replace('./main.html');
                 };
@@ -64,20 +67,24 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
 //Redirect to signup
 signUpBtn.addEventListener('click', ()=> {
+
     window.location.href = './signup.html';
+
 });
 
+//Login user
 loginBtn.addEventListener('click', ()=> {
 
     //Validates if inputs was succesful or not
     let inputError = validateUserInput();
 
     if(!inputError) {
+
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
 
         //Gets value from inputs
-        let inputsFromLogin = {
+        let data = {
             username: username.value,
             password: password.value
         };
@@ -85,17 +92,26 @@ loginBtn.addEventListener('click', ()=> {
         //Request call to server
         xhr.addEventListener('readystatechange', function(){
             if (this.readyState === 4) {
+
                 const res = this.response;
-                if (res.status === 'OK') {
-                    alert('User or password is wrong');
+
+                if (res.status === 404) {
+
+                    alert('User or password is wrong, try again');
+
                 } else {
+
                    //Signs the token to localstorage and redirect if everything went well
                    if (localStorage.getItem('JWT')) {
+
                         localStorage.removeItem('JWT');
                         localStorage.setItem('JWT', res);
+
                     } else {
+
                         localStorage.setItem('JWT', res);
                     };
+                    
                     //Replaces the webpage when success
                     location.replace('./main.html');
                 };
@@ -104,10 +120,8 @@ loginBtn.addEventListener('click', ()=> {
 
         xhr.open('POST', 'http://localhost:3800/login', true);
         xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify(inputsFromLogin));
+        xhr.send(JSON.stringify(data));
 
-    } else {
-        //Remember to remove alert
     };
-    
+
 });

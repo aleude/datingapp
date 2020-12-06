@@ -16,7 +16,10 @@ let errorMessage = document.getElementById('errormessage');
 
 //Checking radiobuttons value
 function checkRadioBtn(radiobutton) {
+
+    //Loops through radio buttons
     for (let i=0; i<radiobutton.length; i++) {
+
         if (radiobutton[i].checked) {
             return radiobutton[i].value;
         };
@@ -64,11 +67,15 @@ function validateUserInput() {
 
     //Conditional statement to handle success or error
     if (inputError) {
+
         errorMessage.innerHTML = message;
         return inputError;
+
     } else {
+
         errorMessage.innerHTML = '';
         return inputError;
+
     };
 };
 
@@ -77,22 +84,27 @@ function validateUserInput() {
 
 //Check if user is already logged in
 document.addEventListener('DOMContentLoaded', ()=> {
-    if(localStorage.getItem('JWT') == true) {
+
+    if(localStorage.getItem('JWT')) {
         location.replace('./main.html');
     };
+
 });
 
 //Validate password when typing
 password.addEventListener('keyup', ()=> {
     //Length of password
-    let x = 8;
+    let minChar = 8;
     let input = password.value;
 
-    if (input.length < x) {
-        passValidate.innerHTML = `Password must be longer than ${x} characters`
+    if (input.length < minChar) {
+
+        passValidate.innerHTML = `Password must be longer than ${minChar} characters`;
     } else {
+
         passValidate.innerHTML = '';
     };
+
 });
 
 //Back button redirect
@@ -113,7 +125,7 @@ signUp.addEventListener('click', ()=> {
         xhr.responseType = 'json';
 
         //Gets the value from input
-        let newUserForm = {
+        let data = {
             username: username.value,
             password: password.value,
             firstname: firstName.value,
@@ -124,12 +136,17 @@ signUp.addEventListener('click', ()=> {
 
         //Request call to server
         xhr.addEventListener('readystatechange', function() {
+
             if (this.readyState === 4) {
+
                 const res = this.response;
-                if (res.status === 'OK') {
+
+                if (res.status === 403) {
                     errorMessage.innerHTML = 'Username already exists!';
                 } else {
+
                     errorMessage.innerHTML = 'User has been created!'
+
                     //Signs the token to localstorage and redirect if everything went well
                     if (localStorage.getItem('JWT')) {
                         localStorage.removeItem('JWT');
@@ -145,6 +162,6 @@ signUp.addEventListener('click', ()=> {
 
         xhr.open('POST', 'http://localhost:3800/signup', true);
         xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.send(JSON.stringify(newUserForm));
+        xhr.send(JSON.stringify(data));
     };
 });

@@ -40,3 +40,9 @@ form, h2, p{
     background-color: white;
 
 }
+
+#no-matches-h1 {
+    
+    padding: 20%;
+    text-align: center;
+};

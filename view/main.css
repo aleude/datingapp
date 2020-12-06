@@ -95,3 +95,8 @@
     justify-content: center;
     align-items: center;
 }
+
+#no-users-h1 {
+    padding: 20%;
+    text-align: center;
+}

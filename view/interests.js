@@ -6,8 +6,6 @@ let logoutBtn = document.getElementById('logout-btn');
 let interestField = document.getElementById('interests');
 let saveBtn = document.getElementById('savebutton');
 
-//- Function
-
 
 //- Eventlisteners and reqeusts:
 
@@ -20,18 +18,24 @@ document.addEventListener('DOMContentLoaded', ()=> {
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
         
+        //Gets token
         let token = localStorage.getItem('JWT');
-        console.log(token);
+
         xhr.addEventListener('readystatechange', function(){
+
             if (this.readyState === 4) {
+                
                 const res = this.response;
+
                 //If user wasn't found, redirect to login
-                if (res === null) {
+                if (res.status === 404) {
+
                     location.replace('./index.html');
+
                 } else {
 
                     //Updates textfield with users' interest
-                    interestField.value += res.text;
+                    interestField.value = res.text;
                 
                 };
             };
@@ -53,44 +57,54 @@ document.addEventListener('DOMContentLoaded', ()=> {
 saveBtn.addEventListener('click', () => {
 
     const xhr = new XMLHttpRequest();
-        xhr.responseType = 'json';
+    xhr.responseType = 'json';
     
-        let token = localStorage.getItem('JWT');
+    //Gets token
+    let token = localStorage.getItem('JWT');
     
-        let data = {
-            text: interestField.value
-        };
+    //Gets updated data from user
+    let data = {
+        text: interestField.value
+    };
     
-        xhr.addEventListener('readystatechange', function(){
-            if (this.readyState === 4) {
-                let res = this.response;
-                if (res === null) {
-                    alert(`Something went wrong, couldn't update interests`);
-                } else {
+    xhr.addEventListener('readystatechange', function(){
+        if (this.readyState === 4) {
 
-                    //Reload site if everything went well
-                    location.reload();
+            let res = this.response;
+
+            if (res.status === 404) {
+
+                alert(`Something went wrong, couldn't update interests`);
+
+            } else {
+
+                //Reload site if everything went well
+                location.reload();
                 
-                };
             };
-        });
+        };
+    });
     
-        xhr.open('PUT', 'http://localhost:3800/interests/update', true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.setRequestHeader('Authorization', token);
-        xhr.send(JSON.stringify(data));    
+    xhr.open('PUT', 'http://localhost:3800/interests/put', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('Authorization', token);
+    xhr.send(JSON.stringify(data));    
 
 });
 
+//Back button
 backBtn.addEventListener('click', ()=> {
 
     window.location.href = './settings.html';
 });
 
+//Logout button
 logoutBtn.addEventListener('click', ()=> {
 
     if (localStorage.getItem('JWT')) {
         localStorage.removeItem('JWT');
     }
+
     location.replace('./index.html');
+
 });
