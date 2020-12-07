@@ -3,6 +3,7 @@ class Interest {
     constructor(username, interestText) {
         this.username = username;
         this.interestText = interestText;
+
     };
 
     //Sub-function to find this user in file
@@ -16,14 +17,17 @@ class Interest {
                 error = false;
                 index = i;
                 break;
+
             };
         };
 
         //Error
         if(error) {
             return console.log(`Error: ${this.username} wasn't found in file of name: ${file}`);
+
         } else {
             return index;
+
         };
 
     };
@@ -37,11 +41,12 @@ class Interest {
             //Removes user from file index of i
             file.splice(i, 1);
             return console.log(`Success: ${this.username} was removed from ${file}`);
+
         } else {
             return console.log(`Error: ${this.username} couldn't be removed from ${file}`);
+
         };
     };
-
 };
 
 module.exports = Interest;

@@ -1,30 +1,41 @@
-body {
+body, html {
     margin: 0%, auto;
-    background-color: antiquewhite;
+    background-color: rgb(229, 242, 252);
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif
+}
+
+.header button {
+    width: 100px;
 }
 
 .wrapper {
-    height: 750px;
-    background-color: aqua;
-    margin: 50px 15% 50px 15%;
+    height: 80%;
+    background-color: rgba(248, 246, 241, 0.925);
+    margin: 5%;
+    width: 90%;
     border-radius: 0%;
-    box-shadow: 1px 1px 3px 3px lightgray;
-    border: solid 1px gray;
+    box-shadow: 1px 1px 3px 3px rgb(173, 184, 199);
+    border: solid 1px rgb(174, 183, 196);
+    box-sizing: border-box;
+    overflow: scroll;
 
 }
 
 .header {
     height: 12.5%;
     width: 100%;
-    background-color: lightblue;
-    box-shadow: 0px 5px #c5c5c5;
+    background-color: rgb(224, 209, 199);
     display: flex;
     justify-content: space-between;
+    min-height: 100px;
 }
 
 .main {
-    background-color: lightcyan;
-    height: 87.5%;
+    background-color: rgba(248, 246, 241, 0.925);
+    height: 85%;
     width: 100%;
 }
 
@@ -40,8 +51,7 @@ body {
 .headerleft {
     height: 100%;
     width: 25%;
-    display: flex;
-    justify-content: left;
+    flex: 2
 }
 
 .headermiddle {
@@ -50,6 +60,8 @@ body {
     display: flex;
     align-items: center; /* Vertical align */
     justify-content: center; /*Horizontal align*/
+    flex: 1;
+
 }
 
 .headerright {
@@ -57,7 +69,9 @@ body {
     width: 25%;
     display: flex;
     flex-direction: row;
-    justify-content: right;
+    justify-content: flex-end;
+    flex: 2;
+    overflow: scroll;
 
 }
 
@@ -75,10 +89,6 @@ body {
     margin: 5px;
 }
 
-#b { /* Test til, hvordan man aligner noget i bunden HUSK AT SLETTE DETTE*/
-    position: absolute;
-    height: 50px;
-    background-color: green;
-    width: 50px;
-    bottom: 10px;
+button {
+    border-color: rgb(226, 225, 220);
 }

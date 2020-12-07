@@ -1,3 +1,20 @@
+#master-div {
+    display: flex;
+    justify-content: center;
+    height: 80%;
+}
+
+.main-div {
+    height: 85%;
+    width: 100%;
+    max-width: 750px;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
 .profile-top {
     width: 100%;
     display: flex;
@@ -36,6 +53,8 @@
     display: flex;
     justify-content: center;
     overflow: scroll;
+    position: relative;
+
 }
 
 .profile-bottom div {
@@ -44,12 +63,11 @@
 }
 
 .bottom {
-    position: absolute;
-    height: 150px;
+    position: relative;
+    height: auto;
     width: 100%;
-    bottom: 10px;
+    bottom: 0px;
     margin: -10px;
-
     display: flex;
     justify-content: space-between;
 }

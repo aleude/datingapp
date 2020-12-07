@@ -30,19 +30,14 @@ function matchmaking() {
 
     const xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-
     //Gets token
     let token = localStorage.getItem('JWT');
 
     xhr.addEventListener('readystatechange', function(){
-
         if (this.readyState === 4) {
-
             const res = this.response;
-
             //Validates if any potential matches or not was found
             if (res.status === 'empty') {
-
                 //Remove all items and display text to inform user
                 usernameMatch = '';
                 mainDiv.innerHTML = '';
@@ -50,17 +45,24 @@ function matchmaking() {
                 mainDiv.append(noMoreMatchesH1);
                 noMoreMatchesH1.setAttribute('id', 'no-users-h1');
 
-
             } else {
-
                 //Sets name of potential match
                 usernameMatch = res.username;
-
                 //Updated page with potential match info
                 nameOfMatch.innerHTML = res.fullname;
-                ageOfMatch.innerHTML = res.age;
+                ageOfMatch.innerHTML = res.age + ' years';
                 genderOfMatch.innerHTML = res.gender;
                 interestsOfMatch.innerHTML = res.interests;
+
+                //Changes profile picture to match gender
+                if (res.gender === 'Female') {
+                    profilePic.src = 'images/datingapp-picture-female.png';
+
+                } else if (res.gender === 'Male') {
+                    profilePic.src = 'images/datingapp-picture-male.png';
+
+                };
+
             };
         };
     });
@@ -78,26 +80,23 @@ function matchmaking() {
 
 //Validates if user exists in database and have correct token
 document.addEventListener('DOMContentLoaded', ()=> {
-
     //If users has a token, validates if the token is accepted
     if(localStorage.getItem('JWT')) {
 
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
-        
         //Gets token
         let token = localStorage.getItem('JWT');
 
         xhr.addEventListener('readystatechange', function(){
             if (this.readyState === 4) {
                 const res = this.response;
-
                 //If user wasn't found, redirect to login
-                if (res.status === 404) {
 
+                if (res.status === 404) {
                     location.replace('./index.html');
-                } else {
-                    
+
+                } else {                   
                     //If everything is fine. Do matchmaking.
                     matchmaking();
 
@@ -110,7 +109,6 @@ document.addEventListener('DOMContentLoaded', ()=> {
         xhr.send();
 
     } else {
-
         //If users don't have any token. Redirect to login
         location.replace('./index.html');
     };
@@ -119,61 +117,54 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
 //Eventlisteners for buttons in header:
 matchBtn.addEventListener('click', ()=> {
-
     window.location.href = './matches.html';
 
 });
 
 settingsBtn.addEventListener('click', ()=> {
-
     window.location.href = './settings.html';
 
 });
 
 logoutBtn.addEventListener('click', ()=> {
-
     if (localStorage.getItem('JWT')) {
         localStorage.removeItem('JWT');
     }
     location.replace('./index.html');
+
 });
 
 //Doing matchmaking again if user cliced undecided
 undecidedBtn.addEventListener('click', ()=> {
-
     matchmaking();
 
 });
 
 //Dislike button:
 dislikeBtn.addEventListener('click', ()=> {
-
     //Validates if potential match username is not empty
-    if (usernameMatch !== '') {
 
+    if (usernameMatch !== '') {
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
 
         //Gets token
         let token = localStorage.getItem('JWT');
-
         //Gets username of potential match
         let data = {
             matchname: usernameMatch
+
         };
         
         xhr.addEventListener('readystatechange', function(){
             if (this.readyState === 4) {
-
                 const res = this.response;
 
                 if (res.status === 404) {
-
                     alert('Something went wrong');
                     location.replace('./index.html');
 
                 } else {
-
                     //If user is disliked, find new match
                     matchmaking();
 
@@ -187,7 +178,6 @@ dislikeBtn.addEventListener('click', ()=> {
         xhr.send(JSON.stringify(data));
 
     } else {
-    
         //If something went wrong with username of potential match, find new potential match
         matchmaking();
 
@@ -198,32 +188,26 @@ dislikeBtn.addEventListener('click', ()=> {
 //Like button
 likeBtn.addEventListener('click', ()=> {
     if (usernameMatch !== '') {
-
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
-
         let token = localStorage.getItem('JWT');
 
         let data = {
             matchname: usernameMatch,
             action: like
         };
-        console.log(usernameMatch);
+
         xhr.addEventListener('readystatechange', function(){
             if (this.readyState === 4) {
-
                 const res = this.response;
                 
-
                 if (res.status === 404) {
-
                     alert('Something went wrong');
                     location.replace('./index.html');
 
-                } else if (res.status === 201) { //Ikke 100 på den virker
-                    
+                } else if (res.status === 201) {
                     //If a match was created, notify user
-                    alert(`NICE!! You've now matched with ${usernameMatch}`);
+                    alert(`NICE!! You've now matched with ${res.firstname}`);
 
                     matchmaking();
 
@@ -242,7 +226,6 @@ likeBtn.addEventListener('click', ()=> {
         xhr.send(JSON.stringify(data));
 
     } else {
-
     //If something went wrong with potential match user. Find a new one
     matchmaking();
 

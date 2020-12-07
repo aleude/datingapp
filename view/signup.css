@@ -11,6 +11,8 @@
     text-align: center;
     display: flex;
     flex-direction: column;
+    width: 50%;
+    max-width: 300px;
 }
 
 #signupbutton {
@@ -19,10 +21,14 @@
     background-color: white;
 }
 
-#firstname, #lastname, #username, #age, #password {
-    padding: 4.5%;
+#firstname, #lastname, #username, #age, #password, #birthday {
+    padding: 2%;
     margin-top: -18px;
     border: solid 0.5px gray;
+}
+
+#birthday {
+    padding: 5%;
 }
 
 #passwordvalidate {

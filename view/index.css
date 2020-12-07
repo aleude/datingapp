@@ -5,6 +5,10 @@
     width: 100%;
 }
 
+.main-container div {
+    width: 250px;
+}
+
 .main-container form {
     text-align: center;
     display: flex;
@@ -15,10 +19,6 @@
     padding: 4.5%;
     border: solid 0.5px gray;
     margin-bottom: 7px;
-}
-
-#errormessage {
-    color: red;
 }
 
 #loginbutton, #signupbutton {

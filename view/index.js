@@ -3,6 +3,7 @@ let username = document.getElementById('username');
 let password = document.getElementById('password');
 let loginBtn = document.getElementById('loginbutton');
 let signUpBtn = document.getElementById('signupbutton');
+let numOfUserText = document.getElementById('user-number-text');
 
 //- Functions:
 
@@ -13,10 +14,12 @@ function validateUserInput() {
 
     if (username.value.length < 1) {
         inputError = true;
+
     };
 
     if (password.value.length < 1) {
         inputError = true;
+
     };
 
     if (inputError) {
@@ -24,9 +27,11 @@ function validateUserInput() {
         alert(message);
         //Should return false
         return inputError;
+
     } else {
         //Should return true
         return inputError;
+
     };
 };
 
@@ -62,7 +67,30 @@ document.addEventListener('DOMContentLoaded', ()=> {
         xhr.open('GET', 'http://localhost:3800/checkuser', true);
         xhr.setRequestHeader('Authorization', token);
         xhr.send();
-    };
+
+    } else {
+        //If there is no users. Show how many is in the app already
+        const xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+
+        xhr.addEventListener('readystatechange', function(){
+            if (this.readyState === 4) {
+                const res = this.response;
+                console.log('h')
+                //If everything went fine
+                if (res.status === 200) {
+                    //Show the number of total user to new user
+                    numOfUserText.innerText = `Haven't found love yet? Join with more than ${res.num} other singles!`;
+                    
+                }; 
+            };
+        });
+
+        xhr.open('GET', 'http://localhost:3800/usernumber', true);
+        xhr.send();
+
+
+    }
 });
 
 //Redirect to signup

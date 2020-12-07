@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dating-app index</title> <!-- Ændre navn her-->
+    <title>Dating-app</title> <!-- Ændre navn her-->
     <link rel="stylesheet" href="styles.css"/>
     <link rel="stylesheet" href="newuser.css"/>
 </head>
 <body>
     <div class="wrapper">
+        <!--- Header view content --->
         <div class="header">
             <div class="headerleft">
             </div>
@@ -18,16 +19,18 @@
             <div class="headerright">
             </div>
         </div> 
+        <!--- Body view content --->
         <div class="main">
             <div class="main-container">
-                <div>
+                
                 <form>
-                    <h1>Welcome to the site. Write something about yourself to let others know you better</h1>
+                    <h1 id="welcome-headline">Welcome to the site, </h1>
+                    <h2>Write something about yourself to let others know you better</h2>
                     <textarea type="text" id="interests"></textarea>
                     <br>
                     <button type="button" id="savebutton">Save</button>
                 </form>
-               </div>
+            
             </div>
         </div>
     </div>

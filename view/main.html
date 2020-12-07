@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dating-app index</title> <!-- Ændre navn her-->
+    <title>Dating-app</title>
     <link rel="stylesheet" href="styles.css"/>
     <link rel="stylesheet" href="main.css"/>
 </head>
 <body>
     <div class="wrapper">
+        <!--- Header view content --->
         <div class="header">
             <div class="headerleft">
                 <button type="button" id="my-matches-btn">My matches</button>
@@ -22,30 +23,35 @@
                 <button type="button" id="logout-btn">Log out</button> 
                 </div>
             </div>
-        </div> 
-        <div id="main-div" class="main">
-            <div> <!-- This div is maybe not necessary-->
+        </div>
+        <!--- Body view content --->
+        <div id="master-div">
+        <div id="main-div" class="main-div">
+            <!--- Top view content --->
+            <div id="main-top">
             <div class="profile-top">
                 <div class="profile-top-left">
                     <div id="profile-top-left-div-top">
-                        <h1 id="fullname-match">Joe doe</h1>
+                        <h1 id="fullname-match"></h1>
                     </div>
                     <div id="profile-top-left-div-bottom">
-                        <h3 id="age-match">18 years</h2>
-                        <h3 id="gender-match">Female</h2>
+                        <h3 id="age-match"></h2>
+                        <h3 id="gender-match"></h2>
                     </div>
                 </div>
                 <div class="profile-top-right">
-                    <img id="profile-picture" src="images/datingapp-picture.png">
+                    <img id="profile-picture" src="">
                 </div>
             </div>
+            <!--- Middle view content --->
             <div class="profile-bottom">
                 <div id="div-to-no-matches">
                     <h3 id="interests-header">Interests:</h3>
-                    <p id="interests-match">Lorem ipsum dolor sit amet consectetur adipisicing elit. Ipsum quia aliquam labore quo molestias consectetur quisquam quam cumque et minima, iste quasi aliquid minus iusto facilis aperiam rem sint dolorem! Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit rerum placeat velit excepturi praesentium accusamus, soluta ratione quo cumque odit esse ullam vel. Animi tempore ducimus magnam officiis harum at. Lorem ipsum dolor sit amet consectetur adipisicing elit. Ex odio porro, officia dolores totam nesciunt illo odit saepe, fugiat neque pariatur, veritatis eveniet velit molestiae doloremque optio sequi aut voluptatibus.</p>
+                    <p id="interests-match"></p>
                 </div>
             </div>
             </div>
+            <!--- Bottom view content --->
             <div class="bottom">
                 <button type="button" id="dislike">
                     <div class="img-wrap">
@@ -64,6 +70,7 @@
                 </button>
             </div>
         </div>
+    </div>
     </div>
 
     <script src="main.js"></script>

@@ -17,23 +17,19 @@ document.addEventListener('DOMContentLoaded', ()=> {
 
         const xhr = new XMLHttpRequest();
         xhr.responseType = 'json';
-        
         //Gets token
         let token = localStorage.getItem('JWT');
 
         xhr.addEventListener('readystatechange', function(){
 
             if (this.readyState === 4) {
-                
                 const res = this.response;
 
                 //If user wasn't found, redirect to login
                 if (res.status === 404) {
-
                     location.replace('./index.html');
 
                 } else {
-
                     //Updates textfield with users' interest
                     interestField.value = res.text;
                 
@@ -46,7 +42,6 @@ document.addEventListener('DOMContentLoaded', ()=> {
         xhr.send();
 
     } else {
-
         //If users don't have any token. Redirect to login
         location.replace('./index.html');
     };
@@ -58,7 +53,6 @@ saveBtn.addEventListener('click', () => {
 
     const xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-    
     //Gets token
     let token = localStorage.getItem('JWT');
     
@@ -69,15 +63,12 @@ saveBtn.addEventListener('click', () => {
     
     xhr.addEventListener('readystatechange', function(){
         if (this.readyState === 4) {
-
             let res = this.response;
 
             if (res.status === 404) {
-
                 alert(`Something went wrong, couldn't update interests`);
 
             } else {
-
                 //Reload site if everything went well
                 location.reload();
                 
@@ -94,15 +85,15 @@ saveBtn.addEventListener('click', () => {
 
 //Back button
 backBtn.addEventListener('click', ()=> {
-
     window.location.href = './settings.html';
+
 });
 
 //Logout button
 logoutBtn.addEventListener('click', ()=> {
-
     if (localStorage.getItem('JWT')) {
         localStorage.removeItem('JWT');
+        
     }
 
     location.replace('./index.html');

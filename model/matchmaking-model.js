@@ -8,6 +8,7 @@ class Matchmaking {
         this.dislikes = dislikes;
         this.likedBy = likedBy; 
         this.dislikedBy = dislikedBy;
+
     };
 
     //Sub-function to find this user in file
@@ -17,23 +18,28 @@ class Matchmaking {
         let error = true;
 
         for (let i = 0; i<file.length; i++) {
+
             if (this.username === file[i].username) {
                 error = false;
                 index = i;
                 break;
+
             };
         };
 
         //Error
         if(error) {
             return console.log(`Error: ${this.username} wasn't found in file of name: ${file}`);
+
         } else {
             return index;
+
         };
     };
 
     //Sub-function to find counter-user in file
     findOtherUserByIndex(otherUser, file) {
+
         let index = undefined;
         let error = true;
 
@@ -42,20 +48,24 @@ class Matchmaking {
                 error = false;
                 index = i;
                 break;
+
             };
         };
 
         //Error
         if (error) {
             return console.log(`Error: ${otherUser} wasn't found in file of name: ${file}`);
+
         } else {
             return index;
+
         };
     };
 
     //Sub-function to find random index in file
     RandomUser(file) {
         return Math.floor(Math.random() * file.length);
+
     };
 
     //Sub-function for recursion
@@ -67,7 +77,6 @@ class Matchmaking {
 
         //Checks if it is not the same user
         if (this.username != maybeThisUser) {
-
             let notLikedOrDisliked = true;
 
             //This block checks for matchUser in dislikes array
@@ -78,6 +87,7 @@ class Matchmaking {
                     //If user was found in array
                     notLikedOrDisliked = false;
                     break;
+
                 };
             };
 
@@ -89,18 +99,22 @@ class Matchmaking {
                     //If user was found in array
                     notLikedOrDisliked = false;
                     break;
+
                 };
             };
 
             if(notLikedOrDisliked) {
                 return arr.push(maybeThisUser);
+
             } else {
                 //If users criteria didn't match, do recursion
                 this.findMatchHelper(file, thisUserIndex, arr);
+
             };
 
         } else {
             this.findMatchHelper(file, thisUserIndex, arr);
+
         };
     };
     
@@ -117,13 +131,16 @@ class Matchmaking {
 
         if (totalLikedAndDisliked<numOfUsers) {
             this.findMatchHelper(file, thisUserIndex, arr);
+
         } else {
             //If there is no more users to show
             arr.push(null);
+
         };
 
         //Returns first user matching the criteria
         return arr[0];
+
     };
 
 
@@ -144,6 +161,7 @@ class Matchmaking {
             if (usernameOfMatch === file[x].likedBy[i]) {
                 matchTrue = true;
                 break;
+
             }
 
         }
@@ -152,12 +170,10 @@ class Matchmaking {
             //Pushes match username to this user match array
             file[x].matches.push(usernameOfMatch);
             file[j].matches.push(this.username);
-
             //Returns 1 for true
             return 1;
 
         } else {
-            
             //Returns 0 for false
             return 0;
 
@@ -166,11 +182,11 @@ class Matchmaking {
 
     //Delete a single match
     deleteMatch(usernameOfMatch, file) {
+
         //Index of this user
         let a = this.findThisUserByIndex(file);
         //index of other user
         let b = this.findOtherUserByIndex(usernameOfMatch, file);
-
         let removeMatch = false;
 
         //1 -- Delete from match arrays
@@ -181,6 +197,7 @@ class Matchmaking {
                 file[b].matches.splice(i, 1);
                 removeMatch = true;
                 break;
+
             };
         };
 
@@ -190,6 +207,7 @@ class Matchmaking {
                 file[a].matches.splice(i, 1);
                 removeMatch = true;
                 break;
+
             };
         };
 
@@ -200,6 +218,7 @@ class Matchmaking {
                 file[a].likes.splice(i, 1);
                 removeMatch = true;
                 break;
+
             };
         };
 
@@ -208,6 +227,7 @@ class Matchmaking {
                 file[a].likedBy.splice(i, 1);
                 removeMatch = true;
                 break;
+
             };
         };
 
@@ -218,6 +238,7 @@ class Matchmaking {
                 file[b].likes.splice(i, 1);
                 removeMatch = true;
                 break;
+
             };
         };
 
@@ -226,14 +247,15 @@ class Matchmaking {
                 file[b].likedBy.splice(i, 1);
                 removeMatch = true;
                 break;
+
             };
         };
 
-        // message
+        // Message
         if (removeMatch) {
-            console.log(`Succes: ${this.username} has succesfull removed ${usernameOfMatch} from match`)
+            console.log(`Succes: ${this.username} has succesfull removed ${usernameOfMatch} from match`);
         } else {
-            console.log(`Error: ${this.username} couldn't remove ${dislikename} from match`)
+            console.log(`Error: ${this.username} couldn't remove ${dislikename} from match`);
         };
     
     };
@@ -248,12 +270,12 @@ class Matchmaking {
         //If i is undefined or not
         if ((i === undefined) || (j === undefined)) {
             return;
-        } else {
 
+        } else {
             file[i].dislikes.push(dislikename);
             file[j].dislikedBy.push(this.username);
+            console.log(`Succes: ${this.username} has succesfull disliked ${dislikename}`);
 
-            console.log(`Succes: ${this.username} has succesfull disliked ${dislikename}`)
         };
     };
 
@@ -267,11 +289,12 @@ class Matchmaking {
         //If i is undefined or not
         if ((i === undefined) || (j === undefined)) {
             return;
+
         } else {
             file[i].likes.push(likename);
             file[j].likedBy.push(this.username);
+            console.log(`Succes: ${this.username} has succesfull liked ${likename}`);
 
-            console.log(`Succes: ${this.username} has succesfull liked ${likename}`)
         };
 
     };
@@ -293,13 +316,11 @@ class Matchmaking {
 
                 //Finds index of users, who liked this user, in file
                 let j = this.findOtherUserByIndex(likedByArr[i], file);
-
                 //Variable for the other users' like-array
                 let otherUserLikesArr = file[j].likes;
 
                 //Itereate over other users' likes array
                 for (let k=0; k<otherUserLikesArr.length; k++) {
-
                     //Remove this user from other users' like array if true
                     if (this.username == otherUserLikesArr[k]) {
                         otherUserLikesArr.splice(k,1);
@@ -313,10 +334,9 @@ class Matchmaking {
 
         //Deletes in liked by from other user (HUSk kommentarer)
         if (likesArr.length > 0) {
+
             for (let i=0; i<likesArr.length; i++) {
-
                 let j = this.findOtherUserByIndex(likesArr[i], file);
-
                 let otherUserLikedByArr = file[j].likedBy;
 
                 for (let k=0; k<otherUserLikedByArr.length; k++) {
@@ -324,6 +344,7 @@ class Matchmaking {
                     if(this.username == otherUserLikedByArr[k]) {
                         otherUserLikedByArr.splice(k,1);
                         break;
+
                     };
                 };
             };
@@ -333,21 +354,20 @@ class Matchmaking {
 
         //Delete this user from all users who have disliked this user
         if(dislikedByArr.length > 0) {
-            for (let i=0; i<dislikedByArr.length; i++) {
 
+            for (let i=0; i<dislikedByArr.length; i++) {
                 //Find index of users, who disliked this user, in file
                 let j = this.findOtherUserByIndex(dislikedByArr[i], file);
-
                 //Variable for the other users' dislike-array
                 let otherUserDislikesArr = file[j].dislikes;
 
                 //Itereate over other users' dislikes array
                 for (let k=0; k<otherUserDislikesArr.length; k++) {
-
                     //Removes this user from other users' dislikes array if true
                     if (this.username == otherUserDislikesArr[k]) {
                         otherUserDislikesArr.splice(k,1);
                         break;
+
                     };
 
                 };
@@ -358,16 +378,14 @@ class Matchmaking {
           //Deletes in liked by from other user (HUSk kommentarer)
           if (dislikesArr.length > 0) {
             for (let i=0; i<dislikesArr.length; i++) {
-
                 let j = this.findOtherUserByIndex(dislikesArr[i], file);
-
                 let otherUserDislikedByArr = file[j].dislikedBy;
 
                 for (let k=0; k<otherUserDislikedByArr.length; k++) {
-
                     if(this.username == otherUserDislikedByArr[k]) {
                         otherUserDislikedByArr.splice(k,1);
                         break;
+
                     };
                 };
             };
@@ -376,14 +394,14 @@ class Matchmaking {
         //Delete this users matches
         for (let i=0; i<this.matches.length; i++) {
             this.deleteMatch(this.matches[i], file);
+
         };
 
         //Delete this user from file
         file.splice(i,1);
         console.log(`Success: ${this.username} was removed from the file: ${file}`);
+
     };
-
-
 };
 
 //Export class

@@ -9,13 +9,14 @@
     text-align: center;
     display: flex;
     flex-direction: column;
+    width: 50%;
 }
 
 #interests {
     height: 250px;
 }
 
-#save {
+#savebutton {
     margin-top: 25px;
     padding: 10px;
     background-color: white;

@@ -9,14 +9,17 @@
     text-align: center;
     display: flex;
     flex-direction: column;
+    width: 50%;
+    max-width: 400px;
 }
 
 #save-btn, #deleteuser-btn, #interests-btn{
-    margin-top: 5px;
+    margin-top: 25px;
     padding: 10px;
     background-color: white;
 }
-#deleteuser {
+
+#deleteuser-btn {
     background-color: darkred;
     color: wheat;
 }
@@ -27,6 +30,3 @@
     border: solid 0.5px gray;
 }
 
-#passwordvalidate {
-    margin-top: 0;
-}

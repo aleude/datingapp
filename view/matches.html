@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dating-app index</title> <!-- Ændre navn her-->
+    <title>Dating-app Matches</title>
     <link rel="stylesheet" href="styles.css"/>
     <link rel="stylesheet" href="matches.css"/>
 </head>
 <body>
     <div class="wrapper">
+        <!--- Header view content --->
         <div class="header">
             <div class="headerleft">
                 <button type="button" id="home-btn">Home</button>
@@ -19,31 +20,29 @@
             <div class="headerright">
                 <button type="button" id="logout-btn">Log out</button> 
             </div>
-        </div> 
-        <div id="main-div" class="main">
-            <div class="container">
+        </div>
+        <!--- Body view content --->
+        <div id="main-div" class="main-div">
                 <h2>List of yout matches:</h2>
                 <br>
                 <div class="table-div">
                     <table id="match-table">
                         <tr>
-                            <th>Matchname ID</th>
-                            <th>Fullname</th>
+                            <th>ID of match</th>
+                            <th>Name</th>
                             <th>Age</th>
                         </tr>
                     </table>
-    
                 </div>
                 <div id="delete-match-div">
                     <h2>Delete match:</h2><br>
-                    <p>Delete a match by typing the Matchname ID in the input and click enter</p>
+                    <p>Delete a match by typing the ID of your match in the input and click the button</p>
                     <form>
                         <input type="text" id="delete-match-input"></input><br>
                         <button type="button" id="delete-match-button">Delete match</button>
-                        <p id="delete-match-message">Your match is...</p>
+                        <p id="delete-match-message"></p>
                     </form>
                 </div>
-            </div>
         </div>
     </div>
     <script src="matches.js"></script>

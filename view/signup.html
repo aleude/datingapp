@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dating-app index</title> <!-- Ændre navn her-->
+    <title>Dating-app sign up</title>
     <link rel="stylesheet" href="styles.css"/>
     <link rel="stylesheet" href="signup.css"/>
 </head>
 <body>
     <div class="wrapper">
+        <!--- Header view content --->
         <div class="header">
             <div class="headerleft">
                 <button type="button" id="back-btn">Back to login</button>
@@ -19,12 +20,11 @@
             <div class="headerright">
             </div>
         </div> 
+        <!--- Body view content --->
         <div class="main">
             <div class="main-container">
-                <div>
                 <form>
                     <h1>Sign up</h1>
-                    <br>
                     <h3>Username</h2>
                     <input type="text" id="username"></input>
                     <h3>First name</h2>
@@ -42,9 +42,8 @@
                     <input type="password" id="password"></input>
                     <p id="passwordvalidate"></p>
                     <button type="button" id="signupbutton">Sign up</button>
-                    <p id="errormessage">Error</p>
+                    <p id="message"></p>
                 </form>
-               </div>
             </div>
         </div>
     </div>

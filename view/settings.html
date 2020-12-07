@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dating-app index</title> <!-- Ændre navn her-->
+    <title>Dating-app Settings</title>
     <link rel="stylesheet" href="styles.css"/>
     <link rel="stylesheet" href="settings.css"/>
 </head>
 <body>
     <div class="wrapper">
+        <!--- Header view content --->
         <div class="header">
             <div class="headerleft">
                 <button type="button" id="home-btn">Home</button>
@@ -20,11 +21,11 @@
                 <button type="button" id="logout-btn">Log out</button> 
             </div>
         </div> 
+        <!--- Body view content --->
         <div class="main">
             <div class="main-container">
-                <div>
                 <form>
-                    <h1>Update your profile</h1>
+                    <h1 id="update-headline">Your profile settings</h1>
                     <br>
                     <button type="button" id="interests-btn">Click here to update your interests</button>
                     <h3>First name</h2>
@@ -33,12 +34,10 @@
                         <input type="text" id="lastname"></input>
                     <h3>Password</h2>
                     <input type="password" id="password"></input>
-                    <p id="passwordvalidate">_</p>
                     <button type="button" id="save-btn">Save changes</button>
-                    <p id="errormessage">Error</p>
+                    <p id="message"></p>
                     <button type="button" id="deleteuser-btn">Delete your profile</button>
                 </form>
-               </div>
             </div>
         </div>
     </div>

@@ -9,7 +9,8 @@ let lastNameInput = document.getElementById('lastname');
 let passwordInput = document.getElementById('password');
 let saveBtn = document.getElementById('save-btn');
 let deleteUserBtn = document.getElementById('deleteuser-btn');
-let errorMessageTag = document.getElementById('errormessage');
+let message = document.getElementById('message');
+let updateHeadline = document.getElementById('update-headline');
 
 //- Functions & Variables used throughout the document
 let noError = true;
@@ -46,6 +47,7 @@ document.addEventListener('DOMContentLoaded', ()=> {
                     firstNameInput.value = res.firstname;
                     lastNameInput.value = res.lastname;
                     passwordInput.value = res.password;
+                    updateHeadline.innerText = `Your profile settings, ${res.firstname}`;
                 
                 };
             };
@@ -151,7 +153,7 @@ saveBtn.addEventListener('click', () => {
 
     } else {
         //If something went wrong. Show error message
-        errorMessageTag.innerText = errorMessage;
+        message.innerText = errorMessage;
         errorMessage = '';
     };
 
@@ -162,23 +164,19 @@ deleteUserBtn.addEventListener('click', () => {
 
     const xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
-    
     //Gets token
     let token = localStorage.getItem('JWT');
     
     xhr.addEventListener('readystatechange', function(){
-
         if (this.readyState === 4) {
 
             let res = this.response;
 
             if (res.status === 404) {
-
                 //If user couldn't be deleted
                 alert(`Something went wrong, couldn't delete profile`);
 
             } else {
-
                 //If the deletion went fine
                 alert('Your user is now deleted');
                 location.replace('./index.html');
