@@ -285,7 +285,7 @@ app.post('/match/like', Verification, (req, res) => {
         //Checks if there is a match. Returns 0 for no and 1 for yes
         let ifMatch = newMatchmaking.checkForMatch(likeName, mFile);
 
-        if(ifMatch === 1) {
+        if(ifMatch === true) {
             //Gets index in file of liked user
             let j = IndexOfUser(likeName, uFile);
 

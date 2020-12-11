@@ -1,5 +1,4 @@
-//NOTE TIL MiG SELV: UDELUKKENDE MATCH RELATERET MED FUNKTIONER OG KLASSER
-
+//Class for users interaction with other users
 class Matchmaking {
     constructor(username, matches, likes, dislikes, likedBy, dislikedBy) {
         this.username = username;
@@ -145,7 +144,6 @@ class Matchmaking {
 
 
     //Matchmaking function
-    //NOTE TIL MIG SELV: Husk at først køres en user.like, og bagefter user.checkForMatch
     checkForMatch(usernameOfMatch, file) {
 
         let x = this.findThisUserByIndex(file);
@@ -171,11 +169,12 @@ class Matchmaking {
             file[x].matches.push(usernameOfMatch);
             file[j].matches.push(this.username);
             //Returns 1 for true
-            return 1;
+            console.log(`Sucess: ${this.username} has matched with: ${usernameOfMatch}`);
+            return true;
 
         } else {
             //Returns 0 for false
-            return 0;
+            return false;
 
         };  
     };
@@ -299,8 +298,6 @@ class Matchmaking {
 
     };
  
-    //NOTE TIL MIG SELV. Tænk på køretid, ift. hvor meget man spare i stedet for at tjekke 2·2 array.
-    //Få testet den evt. for fejl, forkert fejlnavne.
     deleteUser(file) {
 
         //Find the index of user to delete
@@ -311,7 +308,7 @@ class Matchmaking {
         let dislikesArr = this.dislikes;
 
         //Delete this user from all users who have liked this user
-        if (likedByArr.length > 0) {
+        if (likedByArr.length > 0) { 
             for (let i=0; i<likedByArr.length; i++) {
 
                 //Finds index of users, who liked this user, in file

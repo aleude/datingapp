@@ -1,4 +1,4 @@
-
+//Class for all users personalize elements
 class Interest {
     constructor(username, interestText) {
         this.username = username;

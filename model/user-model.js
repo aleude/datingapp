@@ -1,7 +1,4 @@
-//Remember to create both user and free user here
-
-//Full name and age methods in this part
-
+//Class for all information of users
 class User {
     constructor(username, password, firstName, lastName, birthday, gender) {
         this.username = username;
